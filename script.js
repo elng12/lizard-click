@@ -1,9 +1,6 @@
 // Game Variables
 let clickCount = 0;
 let soundEnabled = true;
-let audioPool = [];
-let currentAudioIndex = 0;
-let sou
 
 // Game Elements
 const lizardButton = document.getElementById('lizardButton');
@@ -13,6 +10,7 @@ const flyingLizardsContainer = document.getElementById('flyingLizards');
 
 // Control buttons
 const soundBtn = document.getElementById('soundBtn');
+const testSoundBtn = document.getElementById('testSoundBtn');
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 const shareBtn = document.getElementById('shareBtn');
 const infoBtn = document.getElementById('infoBtn');
@@ -41,34 +39,32 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeGame();
 });
 
-// Initialize audio system (based on reference website)
-function initializeAudio() {
-    // Create optimized audio pool with better memory management
-    const poolSize = 5;
-    for (let i = 0; i < poolSize; i++) {
-        const audio = new Audio('lizard.wav'); // They use a lizard.wav file
-        audio.preload = 'auto';
-        audio.volume = 1.0;
-        audioPool.push(audio);
+// Optimized audio pool with better memory management (copied from reference website)
+const audioPool = [];
+const poolSize = 5; // Reduced pool size for better performance
+let currentAudioIndex = 0;
+let audioBuffer = null;
+let audioContext = null;
+
+// Initialize Web Audio API for better performance
+function initializeAudioContext() {
+    if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
     }
-    
-    // Try to initialize Web Audio API for better performance
-    try {
-        window.audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        loadAudioBuffer();
-    } catch (error) {
-        console.log('Web Audio API not supported, using HTML Audio fallback');
-    }
+    return audioContext;
 }
 
-// Load audio buffer for Web Audio API (from reference website)
+// Load audio buffer once for reuse
 async function loadAudioBuffer() {
     if (audioBuffer) return audioBuffer;
+    
     try {
-        const audioCtx = window.audioContext;
-        const response = await fetch('lizard.wav');
+        const audioCtx = initializeAudioContext();
+        // Add cache busting parameter to ensure fresh audio file
+        const response = await fetch(`lizard.wav?v=${Date.now()}`);
         const arrayBuffer = await response.arrayBuffer();
         audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+        console.log('🦎 Successfully loaded lizard.wav audio buffer');
         return audioBuffer;
     } catch (error) {
         console.log('Failed to load audio buffer, falling back to HTML Audio:', error);
@@ -76,29 +72,70 @@ async function loadAudioBuffer() {
     }
 }
 
-// Play click sound (copied from reference website approach)
+// Initialize fallback audio pool for HTML Audio API
+function initializeAudio() {
+    for (let i = 0; i < poolSize; i++) {
+        // Add cache busting parameter to ensure fresh audio file
+        const audio = new Audio(`lizard.wav?v=${Date.now()}`);
+        audio.preload = 'auto';
+        audio.volume = 1.0;
+        
+        // Handle audio load success
+        audio.onloadeddata = () => {
+            console.log(`🦎 Audio ${i} successfully loaded lizard.wav`);
+        };
+        
+        // Handle audio load errors gracefully
+        audio.onerror = () => {
+            console.log(`Audio ${i} failed to load lizard.wav, will use Web Audio fallback`);
+        };
+        
+        audioPool.push(audio);
+    }
+}
+
+// Play sound function (exact copy from reference website)
 async function playClickSound() {
-    if (!soundEnabled) return;
+    console.log('🦎 playClickSound called, soundEnabled:', soundEnabled);
+    
+    if (!soundEnabled) {
+        console.log('Sound is disabled');
+        return;
+    }
     
     // Try Web Audio API first for better performance
-    if (audioBuffer && window.audioContext) {
+    if (audioBuffer && audioContext) {
         try {
-            const audioCtx = window.audioContext;
+            console.log('🦎 Using Web Audio API');
+            const audioCtx = audioContext;
             if (audioCtx.state === 'suspended') {
+                console.log('🦎 Resuming suspended audio context');
                 await audioCtx.resume();
             }
+            
             const source = audioCtx.createBufferSource();
             source.buffer = audioBuffer;
             source.connect(audioCtx.destination);
             source.start(0);
+            console.log('🦎 Web Audio API sound played successfully');
             return;
         } catch (error) {
             console.log('Web Audio API failed, falling back to HTML Audio:', error);
         }
+    } else {
+        console.log('🦎 Web Audio not available, audioBuffer:', !!audioBuffer, 'audioContext:', !!audioContext);
     }
     
-    // Fallback to HTML Audio API with optimized approach (from reference)
+    // Fallback to HTML Audio API with optimized approach
     const audio = audioPool[currentAudioIndex];
+    console.log('🦎 Using HTML Audio, index:', currentAudioIndex, 'audio element:', audio);
+    
+    if (!audio) {
+        console.log('❌ No audio element available');
+        playLizardVoice();
+        return;
+    }
+    
     // Stop and reset current audio to prevent overlap issues
     if (!audio.paused) {
         audio.pause();
@@ -107,14 +144,74 @@ async function playClickSound() {
     
     // Simple play with minimal error handling to avoid promise stacking
     try {
+        console.log('🦎 Attempting to play HTML Audio');
         await audio.play();
+        console.log('🦎 HTML Audio played successfully');
     } catch (error) {
+        console.log('❌ HTML Audio failed:', error);
         // Move to next audio instance if current one fails
-        currentAudioIndex = (currentAudioIndex + 1) % audioPool.length;
+        currentAudioIndex = (currentAudioIndex + 1) % poolSize;
+        
+        // If all audio instances fail, use Speech Synthesis as final fallback
+        if (currentAudioIndex === 0) {
+            console.log('All audio instances failed, using Speech Synthesis fallback');
+            playLizardVoice();
+        }
     }
     
-    currentAudioIndex = (currentAudioIndex + 1) % audioPool.length;
+    currentAudioIndex = (currentAudioIndex + 1) % poolSize;
 }
+
+// Speech Synthesis fallback for when audio file is not available
+function playLizardVoice() {
+    if (!window.speechSynthesis) {
+        console.log('Speech synthesis not available');
+        return;
+    }
+    
+    try {
+        // Cancel any current speech
+        window.speechSynthesis.cancel();
+        
+        // Create utterance
+        const utterance = new SpeechSynthesisUtterance('Lizard');
+        utterance.rate = 1.2;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+        
+        // Find English voice
+        const voices = window.speechSynthesis.getVoices();
+        const englishVoice = voices.find(voice => voice.lang.startsWith('en'));
+        if (englishVoice) {
+            utterance.voice = englishVoice;
+        }
+        
+        window.speechSynthesis.speak(utterance);
+        console.log('🦎 Playing "Lizard" via Speech Synthesis');
+    } catch (error) {
+        console.log('Speech synthesis failed:', error);
+    }
+}
+
+// Test sound function
+function testSpeechSynthesis() {
+    console.log('Testing lizard.wav audio...');
+    playClickSound();
+}
+
+// Global test functions for debugging
+window.testLizardSound = function() {
+    console.log('🦎 Testing Lizard sound...');
+    playClickSound();
+};
+
+window.checkAudioSupport = function() {
+    console.log('Web Audio API support:', !!(window.AudioContext || window.webkitAudioContext));
+    console.log('HTML Audio support:', !!window.Audio);
+    console.log('Audio pool size:', audioPool.length);
+    console.log('Audio buffer loaded:', !!audioBuffer);
+    console.log('Sound enabled:', soundEnabled);
+};
 
 // Game Initialization
 function initializeGame() {
@@ -123,7 +220,7 @@ function initializeGame() {
     console.log('clickCountDisplay:', clickCountDisplay);
     console.log('cpsCountDisplay:', cpsCountDisplay);
     
-    // Initialize audio
+    // Initialize audio system (copied from reference website)
     initializeAudio();
     
     // Load saved data
@@ -140,6 +237,13 @@ function initializeGame() {
     // Set up control button listeners
     if (soundBtn) {
         soundBtn.addEventListener('click', toggleSound);
+    }
+    
+    if (testSoundBtn) {
+        testSoundBtn.addEventListener('click', () => {
+            console.log('Test sound button clicked');
+            testSpeechSynthesis();
+        });
     }
     
     if (fullscreenBtn) {
@@ -160,9 +264,20 @@ function initializeGame() {
 
 // Handle lizard button click
 function handleLizardClick(event) {
+    // First click - enable audio and update info
+    if (clickCount === 0) {
+        const audioInfo = document.getElementById('audioInfo');
+        if (audioInfo) {
+            audioInfo.textContent = soundEnabled ? '🔊 "Lizard" voice enabled!' : '🔇 Voice disabled';
+            setTimeout(() => {
+                audioInfo.style.display = 'none';
+            }, 3000);
+        }
+    }
+    
     // Resume audio context if needed (for browser autoplay policy)
-    if (window.audioContext && window.audioContext.state === 'suspended') {
-        window.audioContext.resume();
+    if (audioContext && audioContext.state === 'suspended') {
+        audioContext.resume();
     }
     
     // Increment click count
@@ -506,33 +621,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// FAQ Accordion Functionality
-document.querySelectorAll('.faq-question').forEach(question => {
-    question.addEventListener('click', function() {
-        const faqItem = this.parentElement;
-        const answer = faqItem.querySelector('.faq-answer');
-        const toggle = this.querySelector('.faq-toggle');
-        
-        // Close all other FAQ items
-        document.querySelectorAll('.faq-item').forEach(item => {
-            if (item !== faqItem) {
-                item.querySelector('.faq-answer').classList.remove('active');
-                item.querySelector('.faq-toggle').textContent = '+';
-                item.querySelector('.faq-toggle').style.transform = 'rotate(0deg)';
-            }
-        });
-        
-        // Toggle current FAQ item
-        answer.classList.toggle('active');
-        if (answer.classList.contains('active')) {
-            toggle.textContent = '−';
-            toggle.style.transform = 'rotate(180deg)';
-        } else {
-            toggle.textContent = '+';
-            toggle.style.transform = 'rotate(0deg)';
-        }
-    });
-});
+// FAQ sections are now permanently expanded for better SEO and user experience
 
 // Header Background on Scroll
 window.addEventListener('scroll', function() {
@@ -609,23 +698,31 @@ if (lizardAnimation) {
     });
 }
 
-// Add parallax effect to hero section
-window.addEventListener('scroll', function() {
-    const scrolled = window.scrollY;
-    const hero = document.querySelector('.hero');
-    if (hero) {
-        hero.style.transform = `translateY(${scrolled * 0.5}px)`;
-    }
-});
+// Parallax effect removed to keep hero section fixed
 
-// Add loading animation
-window.addEventListener('load', function() {
+// Initialize audio system and preload files when page loads (copied from reference website)
+window.addEventListener('load', async function() {
     document.body.style.opacity = '0';
     document.body.style.transition = 'opacity 0.5s ease';
     
     setTimeout(() => {
         document.body.style.opacity = '1';
     }, 100);
+    
+    // Initialize Web Audio API and load buffer
+    try {
+        await loadAudioBuffer();
+        console.log('🦎 Web Audio API initialized successfully');
+    } catch (error) {
+        console.log('Web Audio initialization failed, using HTML Audio fallback');
+    }
+    
+    // Preload HTML Audio fallback files
+    audioPool.forEach(audio => {
+        audio.load();
+    });
+    
+    console.log('🦎 Audio system initialized with lizard.wav');
     
     // 在控制台提供一些有用的函数
     console.log(`

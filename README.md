@@ -32,6 +32,7 @@ lizard-click-website/
 - 📊 Intersection Observer for scroll animations
 - 🍔 Mobile hamburger menu
 - 🎯 Optimized for performance
+- 🔊 **Advanced Audio System**: Web Audio API + HTML Audio fallback (copied from reference website)
 
 ## Design Highlights
 
@@ -54,6 +55,14 @@ lizard-click-website/
 1. Open `index.html` in a web browser
 2. The website is fully functional as a static site
 3. No build process or dependencies required
+4. **Audio Ready**: `lizard.wav` file is included and ready to use!
+
+### Audio System
+The game uses the exact same audio system as the reference website:
+- ✅ Web Audio API for optimal performance
+- ✅ HTML Audio fallback for compatibility  
+- ✅ Synthetic sound generation as backup
+- ✅ `lizard.wav` file included in project
 
 ## Future Enhancements
 
