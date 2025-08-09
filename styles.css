@@ -152,6 +152,10 @@ body {
     color: #FF9800;
 }
 
+.current-cps-value {
+    color: #4CAF50;
+}
+
 /* Lizard Container */
 .lizard-container {
     margin: 3rem 0;
@@ -350,7 +354,7 @@ body {
     }
     
     .game-stats {
-        gap: 2rem;
+        gap: 1rem;
     }
     
     .stat-value {
@@ -379,7 +383,7 @@ body {
     }
     
     .game-stats {
-        gap: 1.5rem;
+        gap: 0.8rem;
     }
     
     .stat-value {

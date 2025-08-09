@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#4CAF50">
     
     <!-- SEO Meta Tags -->
     <title>🦎 Lizard Click - Free Online Clicking Game</title>
@@ -30,8 +31,11 @@
     <meta name="twitter:description" content="Play the ultimate lizard click game! Experience the viral meme with authentic sounds and real-time stats.">
     <meta name="twitter:image" content="https://pbs.twimg.com/media/GxhtH59b0AAtc8f?format=png&name=small">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="preload" as="audio" href="/lizard.wav" type="audio/wav">
     
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-3HRL4MVNCK"></script>
@@ -42,6 +46,16 @@
         
         gtag('config', 'G-3HRL4MVNCK');
     </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Lizard Click",
+      "url": "https://lizardclick.online/"
+    }
+    </script>
+    <!-- Global counter backend base (Cloudflare Workers) -->
+    <script>window.COUNTER_API_BASE='https://silent-frost-93d1.2296744453m.workers.dev';</script>
 </head>
 
 <body>
@@ -51,14 +65,14 @@
             <div class="nav-brand">
                 <div class="logo">🦎 Lizard Click</div>
             </div>
-            <ul class="nav-menu">
+            <ul class="nav-menu" id="navMenu">
                 <li><a href="#hero">Home</a></li>
                 <li><a href="#features">Features</a></li>
                 <li><a href="#how-to-play">How to Play</a></li>
                 <li><a href="#faq">FAQ</a></li>
                 <li><a href="#hero" class="btn-play">Play Now</a></li>
             </ul>
-            <div class="hamburger">
+            <div class="hamburger" role="button" tabindex="0" aria-controls="navMenu" aria-label="Toggle navigation" aria-expanded="false">
                 <span></span>
                 <span></span>
                 <span></span>
@@ -78,17 +92,21 @@
             <div class="game-stats">
                 <div class="stat-box">
                     <div class="stat-label">My Clicks</div>
-                    <div class="stat-value clicks-value" id="clickCount">0</div>
+                    <div class="stat-value clicks-value" id="clickCount" aria-live="polite" aria-atomic="true">0</div>
                 </div>
                 <div class="stat-box">
                     <div class="stat-label">All Clicks</div>
-                    <div class="stat-value cps-value" id="cpsCount">0</div>
+                    <div class="stat-value cps-value" id="cpsCount" aria-live="polite" aria-atomic="true">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">CPS</div>
+                    <div class="stat-value current-cps-value" id="currentCpsCount" aria-live="polite" aria-atomic="true">0</div>
                 </div>
             </div>
 
             <!-- Main Lizard Character -->
             <div class="lizard-container">
-                <button class="lizard-character" id="lizardButton">
+                <button class="lizard-character" id="lizardButton" type="button" aria-label="Click the lizard to play sound">
                     <img src="https://pbs.twimg.com/media/GxhtH59b0AAtc8f?format=png&name=small" alt="Lizard Click Game Button - Click the Lizard to Play the Viral Meme Game"
                         class="lizard-image">
                 </button>
@@ -101,7 +119,7 @@
                 <p class="audio-info" id="audioInfo" style="font-size: 0.9rem; color: #4CAF50; margin-top: 1rem;">
                     🔊 Click to hear authentic "Lizard" sound!
                 </p>
-                <button onclick="playClickSound()"
+                <button type="button" onclick="playClickSound()"
                     style="margin-top: 10px; padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 20px; cursor: pointer;">
                     🎵 Test Authentic Lizard Sound
                 </button>
@@ -109,11 +127,11 @@
 
             <!-- Control Buttons -->
             <div class="control-buttons">
-                <button class="control-btn sound-btn" id="soundBtn" title="Sound">🔊</button>
-                <button class="control-btn test-sound-btn" id="testSoundBtn" title="Test Sound">🎵</button>
-                <button class="control-btn fullscreen-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
-                <button class="control-btn share-btn" id="shareBtn" title="Share">📤</button>
-                <button class="control-btn info-btn" id="infoBtn" title="Info">ℹ</button>
+                <button class="control-btn sound-btn" id="soundBtn" type="button" title="Sound" aria-label="Toggle sound">🔊</button>
+                <button class="control-btn test-sound-btn" id="testSoundBtn" type="button" title="Test Sound" aria-label="Test sound">🎵</button>
+                <button class="control-btn fullscreen-btn" id="fullscreenBtn" type="button" title="Fullscreen" aria-label="Toggle fullscreen">⛶</button>
+                <button class="control-btn share-btn" id="shareBtn" type="button" title="Share" aria-label="Share my score">📤</button>
+                <button class="control-btn info-btn" id="infoBtn" type="button" title="Info" aria-label="Show stats">ℹ</button>
             </div>
         </div>
 

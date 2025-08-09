@@ -2,10 +2,89 @@
 let clickCount = 0;
 let soundEnabled = true;
 
+// Runtime Stats and History (initialized to avoid ReferenceError)
+let clickHistory = [];
+let currentCPS = 0;
+let maxCPS = 0;
+let clicksInLastSecond = [];
+let gameStartTime = Date.now();
+
+// Global click counter (all users) via CountAPI
+let globalClickCount = 0;
+let globalCountAvailable = false;
+// 可被 index.html 通过 window.COUNTER_API_BASE 覆盖为你自己的后端域名
+const COUNT_API_BASE = (typeof window !== 'undefined' && window.COUNTER_API_BASE)
+    ? window.COUNTER_API_BASE
+    : 'https://api.countapi.xyz';
+const COUNT_NAMESPACE = 'lizardclick_online';
+const COUNT_KEY = 'all_clicks';
+
+// Lightweight fetch with timeout to avoid hanging requests
+async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), timeoutMs);
+    try {
+        const res = await fetch(url, { ...options, signal: controller.signal, mode: 'cors', cache: 'no-store' });
+        return res;
+    } finally {
+        clearTimeout(timeout);
+    }
+}
+
+// Ensure global counter exists and fetch current value
+async function initGlobalCount() {
+    try {
+        const res = await fetchWithTimeout(`${COUNT_API_BASE}/get/${COUNT_NAMESPACE}/${COUNT_KEY}`);
+        if (res.ok) {
+            const data = await res.json();
+            globalClickCount = data.value || 0;
+            globalCountAvailable = true;
+            updateDisplay();
+            return;
+        }
+    } catch (_) { /* fallthrough to create */ }
+
+    try {
+        const resCreate = await fetchWithTimeout(`${COUNT_API_BASE}/create?namespace=${encodeURIComponent(COUNT_NAMESPACE)}&key=${encodeURIComponent(COUNT_KEY)}&value=0`);
+        if (resCreate.ok) {
+            const data = await resCreate.json();
+            globalClickCount = data.value || 0;
+            globalCountAvailable = true;
+            updateDisplay();
+        }
+    } catch (error) {
+        console.log('Failed to init global counter:', error);
+        globalCountAvailable = false;
+        updateDisplay();
+    }
+}
+
+// Increment global counter by n and update UI
+async function incrementGlobalCount(n = 1) {
+    if (!globalCountAvailable) return; // graceful degrade when service blocked
+    try {
+        // Use 'hit' endpoint which auto-creates and increments by 1
+        const url = n === 1
+            ? `${COUNT_API_BASE}/hit/${COUNT_NAMESPACE}/${COUNT_KEY}`
+            : `${COUNT_API_BASE}/update/${COUNT_NAMESPACE}/${COUNT_KEY}?amount=${n}`;
+        const res = await fetchWithTimeout(url);
+        if (res.ok) {
+            const data = await res.json();
+            globalClickCount = data.value || globalClickCount + n;
+            updateDisplay();
+            return;
+        }
+        console.log('Global counter update not ok:', res.status);
+    } catch (error) {
+        console.log('Failed to update global counter:', error);
+    }
+}
+
 // Game Elements
 const lizardButton = document.getElementById('lizardButton');
 const clickCountDisplay = document.getElementById('clickCount');
 const cpsCountDisplay = document.getElementById('cpsCount');
+const currentCpsCountDisplay = document.getElementById('currentCpsCount');
 const flyingLizardsContainer = document.getElementById('flyingLizards');
 
 // Control buttons
@@ -21,7 +100,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const navMenu = document.querySelector('.nav-menu');
     
     if (hamburger && navMenu) {
+        // a11y: manage expanded state for screen readers
+        hamburger.setAttribute('aria-expanded', 'false');
         hamburger.addEventListener('click', function() {
+            const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+            hamburger.setAttribute('aria-expanded', String(!expanded));
             hamburger.classList.toggle('active');
             navMenu.classList.toggle('active');
         });
@@ -60,8 +143,8 @@ async function loadAudioBuffer() {
     
     try {
         const audioCtx = initializeAudioContext();
-        // Add cache busting parameter to ensure fresh audio file
-        const response = await fetch(`lizard.wav?v=${Date.now()}`);
+        // Use stable URL to leverage browser cache
+        const response = await fetch('/lizard.wav');
         const arrayBuffer = await response.arrayBuffer();
         audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
         console.log('🦎 Successfully loaded lizard.wav audio buffer');
@@ -75,8 +158,8 @@ async function loadAudioBuffer() {
 // Initialize fallback audio pool for HTML Audio API
 function initializeAudio() {
     for (let i = 0; i < poolSize; i++) {
-        // Add cache busting parameter to ensure fresh audio file
-        const audio = new Audio(`lizard.wav?v=${Date.now()}`);
+        // Stable URL to allow caching
+        const audio = new Audio('/lizard.wav');
         audio.preload = 'auto';
         audio.volume = 1.0;
         
@@ -193,11 +276,6 @@ function playLizardVoice() {
     }
 }
 
-// Test sound function
-function testSpeechSynthesis() {
-    console.log('Testing lizard.wav audio...');
-    playClickSound();
-}
 
 // Global test functions for debugging
 window.testLizardSound = function() {
@@ -225,6 +303,9 @@ function initializeGame() {
     
     // Load saved data
     loadGameData();
+
+    // Initialize global counter
+    initGlobalCount();
     
     // Set up event listeners
     if (lizardButton) {
@@ -242,7 +323,8 @@ function initializeGame() {
     if (testSoundBtn) {
         testSoundBtn.addEventListener('click', () => {
             console.log('Test sound button clicked');
-            testSpeechSynthesis();
+            // Use main audio path; internal fallback will handle errors
+            playClickSound();
         });
     }
     
@@ -283,11 +365,19 @@ function handleLizardClick(event) {
     // Increment click count
     clickCount++;
     
+    // Record timestamp for CPS and detailed log
+    const now = Date.now();
+    clicksInLastSecond.push(now);
+    recordClickDetails(event, now);
+    
     // Play click sound
     playClickSound();
     
-    // 立即更新显示
-    updateDisplay();
+    // 更新CPS与显示
+    updateCPS();
+
+    // Update global counter (all users)
+    incrementGlobalCount(1);
     
     // Create click effect
     createClickEffect(event);
@@ -333,18 +423,6 @@ function recordClickDetails(event, timestamp) {
     }
 }
 
-// 在控制台输出点击记录
-function logClickRecord() {
-    const lastClick = clickHistory[clickHistory.length - 1];
-    console.log(`🦎 点击记录 #${lastClick.id}:`, {
-        时间: lastClick.date,
-        位置: `(${Math.round(lastClick.position.x)}, ${Math.round(lastClick.position.y)})`,
-        当前CPS: lastClick.currentCPS,
-        总点击数: lastClick.totalClicks,
-        游戏时长: `${Math.round(lastClick.gameTime / 1000)}秒`,
-        距上次点击: `${lastClick.timeSinceLastClick}ms`
-    });
-}
 
 // Create click effect at cursor position
 function createClickEffect(event) {
@@ -446,9 +524,6 @@ function updateCPS() {
         console.log(`🏆 新的CPS记录: ${maxCPS}`);
     }
     
-    // 更新总游戏时间
-    totalPlayTime = now - gameStartTime;
-    
     // Update display
     updateDisplay();
 }
@@ -465,9 +540,11 @@ function updateDisplay() {
     }
     
     if (cpsCountDisplay) {
-        // CPS显示实时点击次数
-        cpsCountDisplay.textContent = clickCount;
-        console.log('Updated cpsCountDisplay to:', clickCount);
+        // 显示全站总点击数（All Clicks）或不可用状态
+        cpsCountDisplay.textContent = globalCountAvailable
+            ? Number(globalClickCount).toLocaleString()
+            : 'N/A';
+        console.log('Updated global clicks to:', globalCountAvailable ? globalClickCount : 'N/A');
         
         // 添加动画效果
         cpsCountDisplay.style.transform = 'scale(1.1)';
@@ -478,6 +555,21 @@ function updateDisplay() {
         }, 150);
     } else {
         console.log('cpsCountDisplay not found');
+    }
+
+    if (currentCpsCountDisplay) {
+        currentCpsCountDisplay.textContent = currentCPS;
+        console.log('Updated current CPS to:', currentCPS);
+        
+        // 添加动画效果
+        currentCpsCountDisplay.style.transform = 'scale(1.1)';
+        currentCpsCountDisplay.style.color = '#4CAF50';
+        
+        setTimeout(() => {
+            currentCpsCountDisplay.style.transform = 'scale(1)';
+        }, 150);
+    } else {
+        console.log('currentCpsCountDisplay not found');
     }
 }
 
@@ -754,7 +846,6 @@ window.resetGame = function() {
         currentCPS = 0;
         clicksInLastSecond = [];
         gameStartTime = Date.now();
-        totalPlayTime = 0;
         
         localStorage.removeItem('lizardClickData');
         updateDisplay();
