@@ -1001,6 +1001,16 @@ window.debugAllClicks = function() {
     console.log('- cpsCountDisplay:', !!cpsCountDisplay);
     console.log('- currentCpsCountDisplay:', !!currentCpsCountDisplay);
     
+    console.log('Elements details:');
+    if (cpsCountDisplay) {
+        console.log('- cpsCountDisplay id:', cpsCountDisplay.id);
+        console.log('- cpsCountDisplay class:', cpsCountDisplay.className);
+        console.log('- cpsCountDisplay textContent:', cpsCountDisplay.textContent);
+        console.log('- cpsCountDisplay innerHTML:', cpsCountDisplay.innerHTML);
+        console.log('- cpsCountDisplay visible:', cpsCountDisplay.offsetParent !== null);
+        console.log('- cpsCountDisplay styles:', window.getComputedStyle(cpsCountDisplay));
+    }
+    
     console.log('Counters:');
     console.log('- clickCount:', clickCount);
     console.log('- currentCPS:', currentCPS);
@@ -1016,6 +1026,10 @@ window.debugAllClicks = function() {
     console.log('- COUNT_API_BASE:', COUNT_API_BASE);
     console.log('- COUNT_NAMESPACE:', COUNT_NAMESPACE);
     console.log('- COUNT_KEY:', COUNT_KEY);
+    
+    console.log('DOM check:');
+    console.log('- document.getElementById("cpsCount"):', document.getElementById('cpsCount'));
+    console.log('- document.querySelector(".cps-value"):', document.querySelector('.cps-value'));
     
     console.log('=== End Debug Info ===');
 };
