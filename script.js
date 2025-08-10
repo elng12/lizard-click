@@ -87,18 +87,19 @@ async function initGlobalCount() {
         // Use localStorage as fallback
         try {
             const saved = localStorage.getItem('lizardGlobalCount');
-            if (saved) {
-                globalClickCount = parseInt(saved) || 0;
+            if (saved && parseInt(saved) > 0) {
+                globalClickCount = parseInt(saved);
+                console.log('✅ Loaded global count from localStorage:', globalClickCount);
             } else {
-                globalClickCount = 0;
+                // Start with a reasonable base number, not zero
+                globalClickCount = 50000;
+                localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
+                console.log('✅ Initialized global count with base value:', globalClickCount);
             }
-            globalCountAvailable = true;
-            console.log('✅ Using localStorage fallback, count:', globalClickCount);
             updateDisplay();
         } catch (error) {
             console.log('❌ localStorage fallback failed:', error);
-            // Set a reasonable default value instead of failing
-            globalClickCount = 50000; // Default starting value
+            globalClickCount = 50000;
             console.log('✅ Using default fallback count:', globalClickCount);
             updateDisplay();
         }
@@ -118,14 +119,15 @@ async function initPantryCount() {
             updateDisplay();
             return true;
         } else if (res.status === 404) {
-            // Create new basket with initial count
+            // Create new basket with reasonable initial count
+            const initialCount = 50000;
             const createRes = await fetchWithTimeout(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${PANTRY_BASKET}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ count: 0 })
+                body: JSON.stringify({ count: initialCount })
             });
             if (createRes.ok) {
-                globalClickCount = 0;
+                globalClickCount = initialCount;
                 globalCountAvailable = true;
                 updateDisplay();
                 return true;
