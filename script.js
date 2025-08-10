@@ -99,7 +99,6 @@ async function initGlobalCount() {
             console.log('❌ localStorage fallback failed:', error);
             // Set a reasonable default value instead of failing
             globalClickCount = 50000; // Default starting value
-            globalCountAvailable = true;
             console.log('✅ Using default fallback count:', globalClickCount);
             updateDisplay();
         }
@@ -136,7 +135,6 @@ async function initPantryCount() {
         console.log('Pantry init failed:', error);
         // Set default value instead of failing
         globalClickCount = 50000;
-        globalCountAvailable = true;
         updateDisplay();
         return true;
     }
@@ -166,44 +164,47 @@ async function updatePantryCount(n = 1) {
 
 // Increment global counter by n and update UI
 async function incrementGlobalCount(n = 1) {
-    // Try CountAPI first
-    if (globalCountAvailable) {
-        try {
-            // Use 'hit' endpoint which auto-creates and increments by 1
-            const url = n === 1
-                ? `${COUNT_API_BASE}/hit/${COUNT_NAMESPACE}/${COUNT_KEY}`
-                : `${COUNT_API_BASE}/update/${COUNT_NAMESPACE}/${COUNT_KEY}?amount=${n}`;
-            const res = await fetchWithTimeout(url);
-            if (res.ok) {
-                const data = await res.json();
-                globalClickCount = data.value || globalClickCount + n;
+    console.log('🔄 Incrementing global count by:', n);
+    
+    // Always increment the local counter first for immediate feedback
+    globalClickCount += n;
+    updateDisplay();
+    
+    // Try to sync with backend (but don't block the UI)
+    try {
+        // Use 'hit' endpoint which auto-creates and increments by 1
+        const url = n === 1
+            ? `${COUNT_API_BASE}/hit/${COUNT_NAMESPACE}/${COUNT_KEY}`
+            : `${COUNT_API_BASE}/update/${COUNT_NAMESPACE}/${COUNT_KEY}?amount=${n}`;
+        const res = await fetchWithTimeout(url, {}, 2000); // Shorter timeout
+        if (res.ok) {
+            const data = await res.json();
+            // Sync with server value if available
+            if (data.value && data.value > globalClickCount) {
+                globalClickCount = data.value;
                 updateDisplay();
-                return;
             }
-            console.log('Global counter update not ok:', res.status);
-        } catch (error) {
-            console.log('Failed to update global counter:', error);
+            console.log('✅ Global counter synced with server:', globalClickCount);
+            return;
         }
+        console.log('⚠️ Server sync failed, using local count');
+    } catch (error) {
+        console.log('⚠️ Server unreachable, using local count:', error.message);
     }
     
-    // Fallback to Pantry if CountAPI failed or not available
-    if (!globalCountAvailable && PANTRY_ID) {
-        const success = await updatePantryCount(n);
-        if (success) {
-            globalCountAvailable = true;
-        }
+    // Try Pantry fallback (non-blocking)
+    if (PANTRY_ID) {
+        updatePantryCount(n).catch(err => {
+            console.log('⚠️ Pantry sync failed:', err.message);
+        });
     }
     
-    // If still not available, use localStorage fallback
-    if (!globalCountAvailable) {
-        try {
-            globalClickCount += n;
-            localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
-            console.log('✅ Global counter updated via localStorage:', globalClickCount);
-            updateDisplay();
-        } catch (error) {
-            console.log('❌ localStorage update failed:', error);
-        }
+    // Always save to localStorage as backup
+    try {
+        localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
+        console.log('✅ Global counter saved to localStorage:', globalClickCount);
+    } catch (error) {
+        console.log('❌ localStorage save failed:', error);
     }
 }
 
@@ -680,14 +681,8 @@ function updateDisplay() {
     
     if (cpsCountDisplay) {
         // 显示全站总点击数（All Clicks）或不可用状态
-        // Always show a number, use localStorage as final fallback
-        if (globalCountAvailable) {
-            cpsCountDisplay.textContent = Number(globalClickCount).toLocaleString();
-        } else {
-            // Use personal clicks as fallback estimate
-            const fallbackCount = Math.max(clickCount, 1000); // Minimum 1000 to look realistic
-            cpsCountDisplay.textContent = Number(fallbackCount).toLocaleString();
-        }
+        // Always show the global click count (real or estimated)
+        cpsCountDisplay.textContent = Number(globalClickCount).toLocaleString();
         console.log('Updated global clicks to:', globalCountAvailable ? globalClickCount : 'N/A');
         
         // 添加动画效果
