@@ -87,13 +87,15 @@ async function initGlobalCount() {
         // Use localStorage as fallback
         try {
             const saved = localStorage.getItem('lizardGlobalCount');
-            if (saved) {
-                globalClickCount = parseInt(saved) || 0;
+            if (saved && parseInt(saved) > 0) {
+                globalClickCount = parseInt(saved);
+                console.log('✅ Loaded global count from localStorage:', globalClickCount);
             } else {
-                globalClickCount = 0;
+                // Start with a reasonable base number, not zero
+                globalClickCount = 50000;
+                localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
+                console.log('✅ Initialized global count with base value:', globalClickCount);
             }
-            globalCountAvailable = true;
-            console.log('✅ Using localStorage fallback, count:', globalClickCount);
             updateDisplay();
         } catch (error) {
             console.log('❌ localStorage fallback failed:', error);
@@ -101,7 +103,6 @@ async function initGlobalCount() {
             globalClickCount = 50000; // Default starting value
             console.log('✅ Using default fallback count:', globalClickCount);
             updateDisplay();
-        }
     }
 }
 
@@ -118,14 +119,15 @@ async function initPantryCount() {
             updateDisplay();
             return true;
         } else if (res.status === 404) {
-            // Create new basket with initial count
+            // Create new basket with reasonable initial count
+            const initialCount = 50000;
             const createRes = await fetchWithTimeout(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${PANTRY_BASKET}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ count: 0 })
+                body: JSON.stringify({ count: initialCount })
             });
             if (createRes.ok) {
-                globalClickCount = 0;
+                globalClickCount = initialCount;
                 globalCountAvailable = true;
                 updateDisplay();
                 return true;
@@ -673,17 +675,17 @@ function updateDisplay() {
     console.log('- globalCountAvailable:', globalCountAvailable);
     
     if (clickCountDisplay) {
-        clickCountDisplay.textContent = clickCount;
-        console.log('✅ Updated clickCountDisplay to:', clickCount);
+        // Now shows "All Clicks" - display global count
+        clickCountDisplay.textContent = Number(globalClickCount).toLocaleString();
+        console.log('✅ Updated All Clicks (clickCountDisplay) to:', globalClickCount);
     } else {
         console.log('❌ clickCountDisplay not found');
     }
     
     if (cpsCountDisplay) {
-        // 显示全站总点击数（All Clicks）或不可用状态
-        // Always show the global click count (real or estimated)
-        cpsCountDisplay.textContent = Number(globalClickCount).toLocaleString();
-        console.log('Updated global clicks to:', globalCountAvailable ? globalClickCount : 'N/A');
+        // Now shows "My Clicks" - display personal count
+        cpsCountDisplay.textContent = clickCount;
+        console.log('✅ Updated My Clicks (cpsCountDisplay) to:', clickCount);
         
         // 添加动画效果
         cpsCountDisplay.style.transform = 'scale(1.1)';
