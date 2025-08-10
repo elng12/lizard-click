@@ -148,7 +148,10 @@ async function incrementGlobalCount(n = 1) {
     
     // Fallback to Pantry if CountAPI failed or not available
     if (!globalCountAvailable && PANTRY_ID) {
-        await updatePantryCount(n);
+        const success = await updatePantryCount(n);
+        if (success) {
+            globalCountAvailable = true;
+        }
     }
 }
 
