@@ -19,6 +19,10 @@ const COUNT_API_BASE = (typeof window !== 'undefined' && window.COUNTER_API_BASE
 const COUNT_NAMESPACE = 'lizardclick_online';
 const COUNT_KEY = 'all_clicks';
 
+// Pantry fallback configuration (pure frontend + hosted JSON)
+const PANTRY_ID = (typeof window !== 'undefined' && window.PANTRY_ID) ? window.PANTRY_ID : null;
+const PANTRY_BASKET = (typeof window !== 'undefined' && window.PANTRY_BASKET) ? window.PANTRY_BASKET : 'lizardclick_global';
+
 // Lightweight fetch with timeout to avoid hanging requests
 async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
     const controller = new AbortController();
@@ -33,6 +37,7 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
 
 // Ensure global counter exists and fetch current value
 async function initGlobalCount() {
+    // Try CountAPI first
     try {
         const res = await fetchWithTimeout(`${COUNT_API_BASE}/get/${COUNT_NAMESPACE}/${COUNT_KEY}`);
         if (res.ok) {
@@ -51,32 +56,99 @@ async function initGlobalCount() {
             globalClickCount = data.value || 0;
             globalCountAvailable = true;
             updateDisplay();
+            return;
         }
     } catch (error) {
-        console.log('Failed to init global counter:', error);
+        console.log('CountAPI failed, trying Pantry fallback:', error);
+    }
+
+    // Fallback to Pantry if CountAPI failed
+    if (PANTRY_ID) {
+        await initPantryCount();
+    } else {
         globalCountAvailable = false;
         updateDisplay();
     }
 }
 
-// Increment global counter by n and update UI
-async function incrementGlobalCount(n = 1) {
-    if (!globalCountAvailable) return; // graceful degrade when service blocked
+// Pantry fallback functions
+async function initPantryCount() {
+    if (!PANTRY_ID) return false;
+    
     try {
-        // Use 'hit' endpoint which auto-creates and increments by 1
-        const url = n === 1
-            ? `${COUNT_API_BASE}/hit/${COUNT_NAMESPACE}/${COUNT_KEY}`
-            : `${COUNT_API_BASE}/update/${COUNT_NAMESPACE}/${COUNT_KEY}?amount=${n}`;
-        const res = await fetchWithTimeout(url);
+        const res = await fetchWithTimeout(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${PANTRY_BASKET}`);
         if (res.ok) {
             const data = await res.json();
-            globalClickCount = data.value || globalClickCount + n;
+            globalClickCount = data.count || 0;
+            globalCountAvailable = true;
             updateDisplay();
-            return;
+            return true;
+        } else if (res.status === 404) {
+            // Create new basket with initial count
+            const createRes = await fetchWithTimeout(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${PANTRY_BASKET}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ count: 0 })
+            });
+            if (createRes.ok) {
+                globalClickCount = 0;
+                globalCountAvailable = true;
+                updateDisplay();
+                return true;
+            }
         }
-        console.log('Global counter update not ok:', res.status);
     } catch (error) {
-        console.log('Failed to update global counter:', error);
+        console.log('Pantry init failed:', error);
+    }
+    return false;
+}
+
+async function updatePantryCount(n = 1) {
+    if (!PANTRY_ID || !globalCountAvailable) return false;
+    
+    try {
+        const newCount = globalClickCount + n;
+        const res = await fetchWithTimeout(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${PANTRY_BASKET}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ count: newCount })
+        });
+        if (res.ok) {
+            globalClickCount = newCount;
+            updateDisplay();
+            return true;
+        }
+    } catch (error) {
+        console.log('Pantry update failed:', error);
+    }
+    return false;
+}
+
+// Increment global counter by n and update UI
+async function incrementGlobalCount(n = 1) {
+    // Try CountAPI first
+    if (globalCountAvailable) {
+        try {
+            // Use 'hit' endpoint which auto-creates and increments by 1
+            const url = n === 1
+                ? `${COUNT_API_BASE}/hit/${COUNT_NAMESPACE}/${COUNT_KEY}`
+                : `${COUNT_API_BASE}/update/${COUNT_NAMESPACE}/${COUNT_KEY}?amount=${n}`;
+            const res = await fetchWithTimeout(url);
+            if (res.ok) {
+                const data = await res.json();
+                globalClickCount = data.value || globalClickCount + n;
+                updateDisplay();
+                return;
+            }
+            console.log('Global counter update not ok:', res.status);
+        } catch (error) {
+            console.log('Failed to update global counter:', error);
+        }
+    }
+    
+    // Fallback to Pantry if CountAPI failed or not available
+    if (!globalCountAvailable && PANTRY_ID) {
+        await updatePantryCount(n);
     }
 }
 
