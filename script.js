@@ -83,8 +83,23 @@ async function initGlobalCount() {
     if (PANTRY_ID) {
         await initPantryCount();
     } else {
-        globalCountAvailable = false;
-        updateDisplay();
+        console.log('🔧 No PANTRY_ID, using localStorage fallback');
+        // Use localStorage as fallback
+        try {
+            const saved = localStorage.getItem('lizardGlobalCount');
+            if (saved) {
+                globalClickCount = parseInt(saved) || 0;
+            } else {
+                globalClickCount = 0;
+            }
+            globalCountAvailable = true;
+            console.log('✅ Using localStorage fallback, count:', globalClickCount);
+            updateDisplay();
+        } catch (error) {
+            console.log('❌ localStorage fallback failed:', error);
+            globalCountAvailable = false;
+            updateDisplay();
+        }
     }
 }
 
@@ -168,6 +183,18 @@ async function incrementGlobalCount(n = 1) {
         const success = await updatePantryCount(n);
         if (success) {
             globalCountAvailable = true;
+        }
+    }
+    
+    // If still not available, use localStorage fallback
+    if (!globalCountAvailable) {
+        try {
+            globalClickCount += n;
+            localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
+            console.log('✅ Global counter updated via localStorage:', globalClickCount);
+            updateDisplay();
+        } catch (error) {
+            console.log('❌ localStorage update failed:', error);
         }
     }
 }

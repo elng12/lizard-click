@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Worker Test</title>
+</head>
+<body>
+    <h1>Worker API Test</h1>
+    <button onclick="testWorker()">Test Worker</button>
+    <div id="results"></div>
+    
+    <script>
+        const results = document.getElementById('results');
+        
+        function log(message) {
+            const p = document.createElement('p');
+            p.textContent = message;
+            results.appendChild(p);
+            console.log(message);
+        }
+        
+        async function testWorker() {
+            results.innerHTML = '';
+            
+            const urls = [
+                'https://silent-frost-93d1.2296744453m.workers.dev/get/lizardclick_online/all_clicks',
+                'https://silent-frost-93d1.2296744453m.workers.dev/create?namespace=lizardclick_online&key=all_clicks&value=0',
+                'https://silent-frost-93d1.2296744453m.workers.dev/hit/lizardclick_online/all_clicks'
+            ];
+            
+            for (const url of urls) {
+                log(`Testing: ${url}`);
+                try {
+                    const response = await fetch(url);
+                    log(`Status: ${response.status} ${response.statusText}`);
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        log(`Response: ${JSON.stringify(data)}`);
+                    } else {
+                        const text = await response.text();
+                        log(`Error: ${text}`);
+                    }
+                } catch (error) {
+                    log(`Error: ${error.message}`);
+                }
+                log('---');
+            }
+        }
+    </script>
+</body>
+</html>
