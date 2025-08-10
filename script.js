@@ -648,13 +648,20 @@ function animateButton() {
 // Update CPS calculation
 function updateCPS() {
     const now = Date.now();
-    const oneSecondAgo = now - 1000;
+    const oneSecondAgo = now - 1100; // Slightly longer window to account for timing variations
     
     // Remove clicks older than 1 second
+    const oldLength = clicksInLastSecond.length;
     clicksInLastSecond = clicksInLastSecond.filter(time => time > oneSecondAgo);
+    const newLength = clicksInLastSecond.length;
     
     // Update current CPS
     currentCPS = clicksInLastSecond.length;
+    
+    // Debug logging
+    if (oldLength !== newLength) {
+        console.log(`🕒 CPS Update: removed ${oldLength - newLength} old clicks, current CPS: ${currentCPS}`);
+    }
     
     // 更新最高CPS记录
     if (currentCPS > maxCPS) {
