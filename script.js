@@ -37,29 +37,46 @@ async function fetchWithTimeout(url, options = {}, timeoutMs = 5000) {
 
 // Ensure global counter exists and fetch current value
 async function initGlobalCount() {
+    console.log('🌐 Initializing global counter...');
+    console.log('- COUNT_API_BASE:', COUNT_API_BASE);
+    console.log('- COUNT_NAMESPACE:', COUNT_NAMESPACE);
+    console.log('- COUNT_KEY:', COUNT_KEY);
+    
     // Try CountAPI first
     try {
-        const res = await fetchWithTimeout(`${COUNT_API_BASE}/get/${COUNT_NAMESPACE}/${COUNT_KEY}`);
+        const url = `${COUNT_API_BASE}/get/${COUNT_NAMESPACE}/${COUNT_KEY}`;
+        console.log('📡 Trying GET:', url);
+        const res = await fetchWithTimeout(url);
+        console.log('📨 GET response:', res.status, res.statusText);
+        
         if (res.ok) {
             const data = await res.json();
             globalClickCount = data.value || 0;
             globalCountAvailable = true;
-            updateDisplay();
-            return;
-        }
-    } catch (_) { /* fallthrough to create */ }
-
-    try {
-        const resCreate = await fetchWithTimeout(`${COUNT_API_BASE}/create?namespace=${encodeURIComponent(COUNT_NAMESPACE)}&key=${encodeURIComponent(COUNT_KEY)}&value=0`);
-        if (resCreate.ok) {
-            const data = await resCreate.json();
-            globalClickCount = data.value || 0;
-            globalCountAvailable = true;
+            console.log('✅ Global counter loaded:', globalClickCount);
             updateDisplay();
             return;
         }
     } catch (error) {
-        console.log('CountAPI failed, trying Pantry fallback:', error);
+        console.log('❌ GET failed:', error.message);
+    }
+
+    try {
+        const url = `${COUNT_API_BASE}/create?namespace=${encodeURIComponent(COUNT_NAMESPACE)}&key=${encodeURIComponent(COUNT_KEY)}&value=0`;
+        console.log('📡 Trying CREATE:', url);
+        const resCreate = await fetchWithTimeout(url);
+        console.log('📨 CREATE response:', resCreate.status, resCreate.statusText);
+        
+        if (resCreate.ok) {
+            const data = await resCreate.json();
+            globalClickCount = data.value || 0;
+            globalCountAvailable = true;
+            console.log('✅ Global counter created:', globalClickCount);
+            updateDisplay();
+            return;
+        }
+    } catch (error) {
+        console.log('❌ CREATE failed:', error.message);
     }
 
     // Fallback to Pantry if CountAPI failed
@@ -161,6 +178,14 @@ const clickCountDisplay = document.getElementById('clickCount');
 const cpsCountDisplay = document.getElementById('cpsCount');
 const currentCpsCountDisplay = document.getElementById('currentCpsCount');
 const flyingLizardsContainer = document.getElementById('flyingLizards');
+
+// Debug: Log element availability
+console.log('🔍 Element check:');
+console.log('- lizardButton:', !!lizardButton);
+console.log('- clickCountDisplay:', !!clickCountDisplay);
+console.log('- cpsCountDisplay:', !!cpsCountDisplay);
+console.log('- currentCpsCountDisplay:', !!currentCpsCountDisplay);
+console.log('- flyingLizardsContainer:', !!flyingLizardsContainer);
 
 // Control buttons
 const soundBtn = document.getElementById('soundBtn');
@@ -605,13 +630,17 @@ function updateCPS() {
 
 // Update display counters
 function updateDisplay() {
-    console.log('Updating display, clickCount:', clickCount);
+    console.log('🔄 Updating display...');
+    console.log('- clickCount:', clickCount);
+    console.log('- currentCPS:', currentCPS);
+    console.log('- globalClickCount:', globalClickCount);
+    console.log('- globalCountAvailable:', globalCountAvailable);
     
     if (clickCountDisplay) {
         clickCountDisplay.textContent = clickCount;
-        console.log('Updated clickCountDisplay to:', clickCount);
+        console.log('✅ Updated clickCountDisplay to:', clickCount);
     } else {
-        console.log('clickCountDisplay not found');
+        console.log('❌ clickCountDisplay not found');
     }
     
     if (cpsCountDisplay) {
