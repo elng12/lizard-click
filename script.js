@@ -658,7 +658,7 @@ function updateCPS() {
     // Update current CPS
     currentCPS = clicksInLastSecond.length;
     
-    // Debug logging
+    // Debug logging for CPS calculation
     if (oldLength !== newLength) {
         console.log(`🕒 CPS Update: removed ${oldLength - newLength} old clicks, current CPS: ${currentCPS}`);
     }
