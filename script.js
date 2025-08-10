@@ -957,6 +957,8 @@ window.addEventListener('load', async function() {
 • clickHistory - 查看点击历史记录
 • clearClickHistory() - 清除点击历史
 • resetGame() - 重置游戏数据
+• debugAllClicks() - 🔍 调试All Clicks问题
+• testGlobalCounter() - 🌐 测试全局计数器
 
 开始点击蜥蜴，每次点击都会在控制台显示详细记录！
     `);
@@ -989,3 +991,50 @@ window.resetGame = function() {
 // 全局函数：获取统计信息
 window.getClickStats = getClickStats;
 window.exportClickData = exportClickData;
+
+// 专门的调试函数
+window.debugAllClicks = function() {
+    console.log('🔍 === All Clicks Debug Info ===');
+    console.log('Elements:');
+    console.log('- lizardButton:', !!lizardButton);
+    console.log('- clickCountDisplay:', !!clickCountDisplay);
+    console.log('- cpsCountDisplay:', !!cpsCountDisplay);
+    console.log('- currentCpsCountDisplay:', !!currentCpsCountDisplay);
+    
+    console.log('Counters:');
+    console.log('- clickCount:', clickCount);
+    console.log('- currentCPS:', currentCPS);
+    console.log('- globalClickCount:', globalClickCount);
+    console.log('- globalCountAvailable:', globalCountAvailable);
+    
+    console.log('Display values:');
+    console.log('- clickCountDisplay.textContent:', clickCountDisplay ? clickCountDisplay.textContent : 'N/A');
+    console.log('- cpsCountDisplay.textContent:', cpsCountDisplay ? cpsCountDisplay.textContent : 'N/A');
+    console.log('- currentCpsCountDisplay.textContent:', currentCpsCountDisplay ? currentCpsCountDisplay.textContent : 'N/A');
+    
+    console.log('API Info:');
+    console.log('- COUNT_API_BASE:', COUNT_API_BASE);
+    console.log('- COUNT_NAMESPACE:', COUNT_NAMESPACE);
+    console.log('- COUNT_KEY:', COUNT_KEY);
+    
+    console.log('=== End Debug Info ===');
+};
+
+// 测试全局计数器
+window.testGlobalCounter = async function() {
+    console.log('🌐 Testing Global Counter...');
+    try {
+        const url = `${COUNT_API_BASE}/get/${COUNT_NAMESPACE}/${COUNT_KEY}`;
+        console.log('Testing URL:', url);
+        const res = await fetchWithTimeout(url);
+        console.log('Response status:', res.status);
+        if (res.ok) {
+            const data = await res.json();
+            console.log('Response data:', data);
+        } else {
+            console.log('Response error:', res.statusText);
+        }
+    } catch (error) {
+        console.log('Fetch error:', error.message);
+    }
+};
