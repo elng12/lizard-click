@@ -62,7 +62,7 @@ async function initGlobalCount() {
     }
 
     try {
-        const url = `${COUNT_API_BASE}/create?namespace=${encodeURIComponent(COUNT_NAMESPACE)}&key=${encodeURIComponent(COUNT_KEY)}&value=0`;
+        const url = `${COUNT_API_BASE}/create?namespace=${encodeURIComponent(COUNT_NAMESPACE)}&key=${encodeURIComponent(COUNT_KEY)}&value=50000`;
         console.log('📡 Trying CREATE:', url);
         const resCreate = await fetchWithTimeout(url);
         console.log('📨 CREATE response:', resCreate.status, resCreate.statusText);
