@@ -1,0 +1,27 @@
+🚀 上传文件检查清单
+
+=== 必须上传的文件 ===
+□ sitemap.xml (最重要！修复GSC问题)
+□ index.html (域名+SEO优化)
+□ robots.txt (sitemap链接)
+
+=== 上传后立即检查 ===
+□ https://lizardbutton.click/sitemap.xml
+   应该显示: lizardbutton.click
+   不能显示: lizardclick.online
+
+□ https://lizardbutton.click/
+   页面正常加载
+
+□ https://lizardbutton.click/robots.txt
+   包含正确的sitemap链接
+
+=== Google Search Console ===
+□ 删除旧sitemap
+□ 提交新sitemap: https://lizardbutton.click/sitemap.xml
+□ 等待"成功"状态
+
+=== 完成标志 ===
+✅ sitemap显示正确域名
+✅ GSC显示"成功"状态
+✅ 网站正常运行

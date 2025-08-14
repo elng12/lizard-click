@@ -1,7 +1,20 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lizardclick.online/sitemap.xml
-Host: lizardclick.online
+# Sitemap location
+Sitemap: https://lizardbutton.click/sitemap.xml
 
+# Block access to admin or sensitive files (if any)
+Disallow: /admin/
+Disallow: /.git/
+Disallow: /node_modules/
 
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /

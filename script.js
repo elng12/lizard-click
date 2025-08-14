@@ -227,13 +227,19 @@ console.log('- flyingLizardsContainer:', !!flyingLizardsContainer);
 
 // Control buttons
 const soundBtn = document.getElementById('soundBtn');
-const testSoundBtn = document.getElementById('testSoundBtn');
+
 const fullscreenBtn = document.getElementById('fullscreenBtn');
 const shareBtn = document.getElementById('shareBtn');
 const infoBtn = document.getElementById('infoBtn');
 
 // Mobile Navigation Toggle
 document.addEventListener('DOMContentLoaded', function() {
+    // Set current year dynamically
+    const currentYearElement = document.getElementById('currentYear');
+    if (currentYearElement) {
+        currentYearElement.textContent = new Date().getFullYear();
+    }
+    
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
     
@@ -458,13 +464,7 @@ function initializeGame() {
         soundBtn.addEventListener('click', toggleSound);
     }
     
-    if (testSoundBtn) {
-        testSoundBtn.addEventListener('click', () => {
-            console.log('Test sound button clicked');
-            // Use main audio path; internal fallback will handle errors
-            playClickSound();
-        });
-    }
+
     
     if (fullscreenBtn) {
         fullscreenBtn.addEventListener('click', toggleFullscreen);
@@ -863,13 +863,23 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 
 // FAQ sections are now permanently expanded for better SEO and user experience
 
-// Header Background on Scroll
+// Header Background on Scroll and Play Now Button Visibility
 window.addEventListener('scroll', function() {
     const header = document.querySelector('.header');
+    const playNowBtn = document.querySelector('.btn-play');
+    
     if (window.scrollY > 100) {
         header.style.background = 'rgba(255, 255, 255, 0.98)';
+        if (playNowBtn) {
+            playNowBtn.style.opacity = '1';
+            playNowBtn.style.visibility = 'visible';
+        }
     } else {
         header.style.background = 'rgba(255, 255, 255, 0.95)';
+        if (playNowBtn) {
+            playNowBtn.style.opacity = '0.5';
+            playNowBtn.style.visibility = 'visible';
+        }
     }
 });
 

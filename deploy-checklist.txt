@@ -1,0 +1,30 @@
+🚀 LIZARD CLICK 部署文件清单
+
+=== 必须上传的核心文件 ===
+✅ index.html          (主页面 - 必须)
+✅ script.js           (游戏逻辑 - 必须)  
+✅ styles.css          (样式文件 - 必须)
+✅ lizard.wav          (音频文件 - 必须)
+✅ favicon.ico         (网站图标 - 必须)
+
+=== SEO重要文件 ===
+✅ sitemap.xml         (站点地图 - 修复Google Search Console问题)
+✅ robots.txt          (搜索引擎指引 - SEO必须)
+
+=== 上传后验证URL ===
+1. https://lizardbutton.click/
+2. https://lizardbutton.click/sitemap.xml
+3. https://lizardbutton.click/robots.txt
+4. https://lizardbutton.click/lizard.wav
+
+=== Google Search Console操作 ===
+1. 删除旧的sitemap（状态：无法获取）
+2. 提交新sitemap: https://lizardbutton.click/sitemap.xml
+3. 等待Google重新抓取（1-3天）
+
+=== 部署完成标志 ===
+✅ 网站正常打开
+✅ 点击蜥蜴有声音
+✅ 计数器正常工作
+✅ sitemap.xml可以访问
+✅ Google Search Console显示"成功"
