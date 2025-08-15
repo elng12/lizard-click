@@ -20,8 +20,13 @@
         setTimeout(() => {
             if (typeof globalClickCount !== 'undefined') {
                 document.getElementById('globalCount').textContent = globalClickCount;
+                
+                // Check script version
+                if (typeof SCRIPT_VERSION !== 'undefined') {
+                    document.getElementById('globalCount').textContent += ` (${SCRIPT_VERSION})`;
+                }
             } else {
-                document.getElementById('globalCount').textContent = 'Main script not loaded';
+                document.getElementById('globalCount').textContent = 'Main script not loaded - NEED TO UPLOAD script.js!';
             }
         }, 2000);
     </script>
