@@ -12,6 +12,14 @@ let gameStartTime = Date.now();
 // Global click counter (all users) via CountAPI
 let globalClickCount = 0;
 let globalCountAvailable = false;
+
+// Fixed 7-digit base number for all users
+const FIXED_BASE_COUNT = 3847291;
+
+function getBaseCount() {
+    console.log('🎯 Using fixed base count:', FIXED_BASE_COUNT);
+    return FIXED_BASE_COUNT;
+}
 // 可被 index.html 通过 window.COUNTER_API_BASE 覆盖为你自己的后端域名
 const COUNT_API_BASE = (typeof window !== 'undefined' && window.COUNTER_API_BASE)
     ? window.COUNTER_API_BASE
@@ -62,7 +70,8 @@ async function initGlobalCount() {
     }
 
     try {
-        const url = `${COUNT_API_BASE}/create?namespace=${encodeURIComponent(COUNT_NAMESPACE)}&key=${encodeURIComponent(COUNT_KEY)}&value=50000`;
+        const baseCount = getBaseCount();
+        const url = `${COUNT_API_BASE}/create?namespace=${encodeURIComponent(COUNT_NAMESPACE)}&key=${encodeURIComponent(COUNT_KEY)}&value=${baseCount}`;
         console.log('📡 Trying CREATE:', url);
         const resCreate = await fetchWithTimeout(url);
         console.log('📨 CREATE response:', resCreate.status, resCreate.statusText);
@@ -91,16 +100,16 @@ async function initGlobalCount() {
                 globalClickCount = parseInt(saved);
                 console.log('✅ Loaded global count from localStorage:', globalClickCount);
             } else {
-                // Start with a reasonable base number, not zero
-                globalClickCount = 50000;
+                // Start with fixed 7-digit base number
+                globalClickCount = getBaseCount();
                 localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
-                console.log('✅ Initialized global count with base value:', globalClickCount);
+                console.log('✅ Initialized global count with fixed base value:', globalClickCount);
             }
             updateDisplay();
         } catch (error) {
             console.log('❌ localStorage fallback failed:', error);
-            globalClickCount = 50000;
-            console.log('✅ Using default fallback count:', globalClickCount);
+            globalClickCount = getBaseCount();
+            console.log('✅ Using fixed fallback count:', globalClickCount);
             updateDisplay();
         }
     }
@@ -119,8 +128,8 @@ async function initPantryCount() {
             updateDisplay();
             return true;
         } else if (res.status === 404) {
-            // Create new basket with reasonable initial count
-            const initialCount = 50000;
+            // Create new basket with fixed 7-digit initial count
+            const initialCount = getBaseCount();
             const createRes = await fetchWithTimeout(`https://getpantry.cloud/apiv1/pantry/${PANTRY_ID}/basket/${PANTRY_BASKET}`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -135,8 +144,8 @@ async function initPantryCount() {
         }
     } catch (error) {
         console.log('Pantry init failed:', error);
-        // Set default value instead of failing
-        globalClickCount = 50000;
+        // Set fixed 7-digit value instead of failing
+        globalClickCount = getBaseCount();
         updateDisplay();
         return true;
     }
