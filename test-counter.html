@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Counter Test</title>
+</head>
+<body>
+    <h1>Counter Test Page</h1>
+    <p>Fixed Base Count: <span id="baseCount">Loading...</span></p>
+    <p>Current Global Count: <span id="globalCount">Loading...</span></p>
+    
+    <script>
+        // Test the fixed base count
+        const FIXED_BASE_COUNT = 3847291;
+        
+        document.getElementById('baseCount').textContent = FIXED_BASE_COUNT;
+        
+        // Test if the main script is working
+        setTimeout(() => {
+            if (typeof globalClickCount !== 'undefined') {
+                document.getElementById('globalCount').textContent = globalClickCount;
+            } else {
+                document.getElementById('globalCount').textContent = 'Main script not loaded';
+            }
+        }, 2000);
+    </script>
+    
+    <!-- Load main script -->
+    <script src="script.js"></script>
+</body>
+</html>
