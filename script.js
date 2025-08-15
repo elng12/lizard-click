@@ -93,25 +93,11 @@ async function initGlobalCount() {
         await initPantryCount();
     } else {
         console.log('🔧 No PANTRY_ID, using localStorage fallback');
-        // Use localStorage as fallback
-        try {
-            const saved = localStorage.getItem('lizardGlobalCount');
-            if (saved && parseInt(saved) > 0) {
-                globalClickCount = parseInt(saved);
-                console.log('✅ Loaded global count from localStorage:', globalClickCount);
-            } else {
-                // Start with fixed 7-digit base number
-                globalClickCount = getBaseCount();
-                localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
-                console.log('✅ Initialized global count with fixed base value:', globalClickCount);
-            }
-            updateDisplay();
-        } catch (error) {
-            console.log('❌ localStorage fallback failed:', error);
-            globalClickCount = getBaseCount();
-            console.log('✅ Using fixed fallback count:', globalClickCount);
-            updateDisplay();
-        }
+        // Use fixed base count as fallback (not localStorage to ensure consistency)
+        console.log('🔧 API unavailable, using fixed base count for consistency');
+        globalClickCount = getBaseCount();
+        console.log('✅ Using fixed fallback count:', globalClickCount);
+        updateDisplay();
     }
 }
 
@@ -146,6 +132,7 @@ async function initPantryCount() {
         console.log('Pantry init failed:', error);
         // Set fixed 7-digit value instead of failing
         globalClickCount = getBaseCount();
+        console.log('✅ Using fixed base count due to Pantry failure:', globalClickCount);
         updateDisplay();
         return true;
     }
@@ -210,12 +197,16 @@ async function incrementGlobalCount(n = 1) {
         });
     }
     
-    // Always save to localStorage as backup
-    try {
-        localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
-        console.log('✅ Global counter saved to localStorage:', globalClickCount);
-    } catch (error) {
-        console.log('❌ localStorage save failed:', error);
+    // Save to localStorage as backup only if APIs are working
+    if (globalCountAvailable) {
+        try {
+            localStorage.setItem('lizardGlobalCount', globalClickCount.toString());
+            console.log('✅ Global counter saved to localStorage:', globalClickCount);
+        } catch (error) {
+            console.log('❌ localStorage save failed:', error);
+        }
+    } else {
+        console.log('⚠️ APIs unavailable, not saving to localStorage to maintain consistency');
     }
 }
 
