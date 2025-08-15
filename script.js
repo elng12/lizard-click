@@ -15,9 +15,11 @@ let globalCountAvailable = false;
 
 // Fixed 7-digit base number for all users
 const FIXED_BASE_COUNT = 3847291;
+const SCRIPT_VERSION = "v2.0-fixed-base";
 
 function getBaseCount() {
     console.log('🎯 Using fixed base count:', FIXED_BASE_COUNT);
+    console.log('📝 Script version:', SCRIPT_VERSION);
     return FIXED_BASE_COUNT;
 }
 // 可被 index.html 通过 window.COUNTER_API_BASE 覆盖为你自己的后端域名
@@ -437,7 +439,9 @@ window.checkAudioSupport = function() {
 
 // Game Initialization
 function initializeGame() {
-    console.log('Initializing game...');
+    console.log('🎮 Initializing game...');
+    console.log('📝 Script version:', SCRIPT_VERSION);
+    console.log('🎯 Fixed base count:', FIXED_BASE_COUNT);
     console.log('lizardButton:', lizardButton);
     console.log('clickCountDisplay:', clickCountDisplay);
     console.log('cpsCountDisplay:', cpsCountDisplay);
