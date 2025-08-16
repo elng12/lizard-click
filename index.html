@@ -24,14 +24,15 @@
     <meta property="og:description" content="Play the ultimate lizard button click game! Experience the viral lizard lizard lizard meme with authentic sounds and real-time stats.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://lizardbutton.click/">
-    <meta property="og:image" content="https://pbs.twimg.com/media/GxhtH59b0AAtc8f?format=png&name=small">
+    <meta property="og:image" content="/lizard.png">
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="🦎 Lizard Button Click - Free Online Clicker Game">
     <meta name="twitter:description" content="Play the ultimate lizard button click game! Experience the viral lizard lizard lizard meme with authentic sounds and real-time stats.">
-    <meta name="twitter:image" content="https://pbs.twimg.com/media/GxhtH59b0AAtc8f?format=png&name=small">
+    <meta name="twitter:image" content="/lizard.png">
     
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; script-src 'self' https://www.googletagmanager.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="styles.css">
@@ -119,7 +120,7 @@
             <!-- Main Lizard Character -->
             <div class="lizard-container">
                 <button class="lizard-character" id="lizardButton" type="button" aria-label="Click the lizard to play sound">
-                    <img src="https://pbs.twimg.com/media/GxhtH59b0AAtc8f?format=png&name=small" alt="Lizard Click Game Button - Click the Lizard to Play the Viral Meme Game"
+                    <img src="/lizard.png" alt="Lizard Click Game Button - Click the Lizard to Play the Viral Meme Game"
                         class="lizard-image">
                 </button>
             </div>
@@ -132,7 +133,7 @@
                 <p class="audio-info" id="audioInfo" style="font-size: 0.9rem; color: #4CAF50; margin-top: 1rem;">
                     🔊 Click to hear authentic "Lizard" sound!
                 </p>
-                <button type="button" onclick="playClickSound()"
+                <button id="testSoundBtn" type="button"
                     style="margin-top: 10px; padding: 8px 16px; background: #4CAF50; color: white; border: none; border-radius: 20px; cursor: pointer;">
                     🎵 Test Authentic Lizard Button Sound
                 </button>
@@ -479,6 +480,12 @@
     </footer>
 
     <script src="script.js"></script>
+    <script>
+// 绑定点击事件，避免使用 inline onclick
+if (document.getElementById('testSoundBtn')) {
+  document.getElementById('testSoundBtn').addEventListener('click', playClickSound);
+}
+</script>
 </body>
 
 </html>
