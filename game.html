@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>>é Lizard Click Game</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f4f0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #4CAF50;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-link">ê Back to Home</a>
+    
+    <div class="game-container">
+        <h1>>é Lizard Click Game</h1>
+        
+        <!-- Game Stats -->
+        <div class="game-stats">
+            <div class="stat-box">
+                <div class="stat-label">All Clicks</div>
+                <div class="stat-value clicks-value" id="clickCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">My Clicks</div>
+                <div class="stat-value cps-value" id="cpsCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">CPS</div>
+                <div class="stat-value current-cps-value" id="currentCpsCount">0</div>
+            </div>
+        </div>
+
+        <!-- Main Lizard Character -->
+        <div class="lizard-container">
+            <button class="lizard-character" id="lizardButton" type="button">
+                <img src="/lizard.png" alt="Click the lizard!" class="lizard-image">
+            </button>
+        </div>
+
+        <!-- Game Description -->
+        <div class="game-description">
+            <p class="main-text">Click the lizard button as fast as you can! >é</p>
+            <p class="sub-text">Experience the viral "lizard lizard lizard" meme!</p>
+        </div>
+
+        <!-- Control Buttons -->
+        <div class="control-buttons">
+            <button class="control-btn sound-btn" id="soundBtn" title="Sound">=
+</button>
+            <button class="control-btn fullscreen-btn" id="fullscreenBtn" title="Fullscreen">ˆ</button>
+            <button class="control-btn share-btn" id="shareBtn" title="Share">=‰</button>
+            <button class="control-btn info-btn" id="infoBtn" title="Info">9</button>
+        </div>
+    </div>
+
+    <!-- Flying lizards container -->
+    <div class="flying-lizards" id="flyingLizards"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
