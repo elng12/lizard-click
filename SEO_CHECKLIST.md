@@ -1,4 +1,4 @@
-# SEO检查报告 - Lizard Click网站
+![alt text](image.png)# SEO检查报告 - Lizard Click网站
 
 ## ✅ 已完成的SEO优化
 
