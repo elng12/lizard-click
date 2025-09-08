@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🦎 Lizard Click Game - Test</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #f0f4f0;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .game-container {
+            text-align: center;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            max-width: 600px;
+            width: 100%;
+        }
+        .game-stats {
+            display: flex;
+            justify-content: center;
+            gap: 4rem;
+            margin-bottom: 3rem;
+        }
+        .stat-box {
+            text-align: center;
+        }
+        .stat-label {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 0.5rem;
+            font-weight: 400;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .clicks-value { color: #4CAF50; }
+        .cps-value { color: #FF9800; }
+        .current-cps-value { color: #2196F3; }
+        
+        .lizard-container {
+            margin: 3rem 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .lizard-character {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.1s ease;
+            touch-action: manipulation;
+            padding: 0;
+        }
+        .lizard-character:hover {
+            transform: scale(1.05);
+        }
+        .lizard-character:active {
+            transform: scale(0.95);
+        }
+        .lizard-image {
+            width: 300px;
+            height: auto;
+            max-width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+        .game-description {
+            margin-top: 2rem;
+            text-align: center;
+        }
+        .main-text {
+            font-size: 1.2rem;
+            color: #4a5c4a;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .sub-text {
+            font-size: 1rem;
+            color: #888;
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <h1>🦎 Lizard Click Game</h1>
+        
+        <!-- Game Stats -->
+        <div class="game-stats">
+            <div class="stat-box">
+                <div class="stat-label">All Clicks</div>
+                <div class="stat-value clicks-value" id="clickCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">My Clicks</div>
+                <div class="stat-value cps-value" id="cpsCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">CPS</div>
+                <div class="stat-value current-cps-value" id="currentCpsCount">0</div>
+            </div>
+        </div>
+
+        <!-- Main Lizard Character -->
+        <div class="lizard-container">
+            <button class="lizard-character" id="lizardButton" type="button">
+                <img src="/lizard.png" alt="Click the lizard!" class="lizard-image">
+            </button>
+        </div>
+
+        <!-- Game Description -->
+        <div class="game-description">
+            <p class="main-text">Click the lizard button as fast as you can! 🦎</p>
+            <p class="sub-text">Experience the viral "lizard lizard lizard" meme!</p>
+        </div>
+    </div>
+
+    <script>
+        // 简化的游戏逻辑
+        let clickCount = 0;
+        let myClicks = 0;
+        let currentCPS = 0;
+        let clicksInLastSecond = [];
+        
+        // 获取元素
+        const lizardButton = document.getElementById('lizardButton');
+        const clickCountDisplay = document.getElementById('clickCount');
+        const cpsCountDisplay = document.getElementById('cpsCount');
+        const currentCpsCountDisplay = document.getElementById('currentCpsCount');
+        
+        console.log('🔍 Elements found:');
+        console.log('- lizardButton:', !!lizardButton);
+        console.log('- clickCountDisplay:', !!clickCountDisplay);
+        console.log('- cpsCountDisplay:', !!cpsCountDisplay);
+        console.log('- currentCpsCountDisplay:', !!currentCpsCountDisplay);
+        
+        // 更新显示
+        function updateDisplay() {
+            console.log('🔄 Updating display...');
+            console.log('- clickCount:', clickCount);
+            console.log('- myClicks:', myClicks);
+            console.log('- currentCPS:', currentCPS);
+            
+            if (clickCountDisplay) {
+                clickCountDisplay.textContent = clickCount.toLocaleString();
+            }
+            if (cpsCountDisplay) {
+                cpsCountDisplay.textContent = myClicks;
+            }
+            if (currentCpsCountDisplay) {
+                currentCpsCountDisplay.textContent = currentCPS;
+            }
+        }
+        
+        // 更新CPS
+        function updateCPS() {
+            const now = Date.now();
+            const oneSecondAgo = now - 1000;
+            
+            // 移除超过1秒的点击
+            clicksInLastSecond = clicksInLastSecond.filter(time => time > oneSecondAgo);
+            currentCPS = clicksInLastSecond.length;
+            
+            updateDisplay();
+        }
+        
+        // 处理点击
+        function handleClick() {
+            console.log('🦎 Button clicked!');
+            
+            clickCount++;
+            myClicks++;
+            
+            const now = Date.now();
+            clicksInLastSecond.push(now);
+            
+            updateCPS();
+            
+            // 简单的按钮动画
+            const lizardImage = lizardButton.querySelector('.lizard-image');
+            if (lizardImage) {
+                lizardImage.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    lizardImage.style.transform = 'scale(1)';
+                }, 100);
+            }
+        }
+        
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 Game initialized!');
+            
+            if (lizardButton) {
+                lizardButton.addEventListener('click', handleClick);
+                console.log('✅ Click listener added');
+            } else {
+                console.error('❌ Lizard button not found!');
+            }
+            
+            updateDisplay();
+            
+            // 每秒更新CPS
+            setInterval(updateCPS, 100);
+        });
+        
+        // 测试函数
+        window.testClick = function() {
+            console.log('🧪 Test click triggered');
+            handleClick();
+        };
+        
+        console.log('🦎 Script loaded successfully!');
+        console.log('💡 Try typing testClick() in console to test');
+    </script>
+</body>
+</html>

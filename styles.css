@@ -216,6 +216,30 @@ body {
     color: #888;
 }
 
+/* Game Description */
+.game-description {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.game-description .main-text {
+    font-size: 1.2rem;
+    color: #4a5c4a;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.game-description .sub-text {
+    font-size: 1rem;
+    color: #888;
+    margin-bottom: 0;
+}
+
+/* Current CPS Value */
+.current-cps-value {
+    color: #2196F3;
+}
+
 /* Control Buttons */
 .control-buttons {
     position: absolute;
@@ -990,7 +1014,8 @@ a:focus,
     }
 }
 
-/ * Features Section */ .features {
+/* Features Section */
+.features {
     padding: 5rem 0;
     background: #f8f9fa;
 }

@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🦎 Lizard Click Game</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="styles.css">
     
     <!-- Google AdSense -->
@@ -92,7 +98,7 @@
         <!-- Main Lizard Character -->
         <div class="lizard-container">
             <button class="lizard-character" id="lizardButton" type="button">
-                <img src="/lizard.png" alt="Click the lizard!" class="lizard-image">
+                <img src="lizard.png" alt="Click the lizard!" class="lizard-image">
             </button>
         </div>
 
@@ -140,6 +146,276 @@
     <!-- Flying lizards container -->
     <div class="flying-lizards" id="flyingLizards"></div>
 
-    <script src="script.js"></script>
+    <!-- 简化的游戏脚本 -->
+    <script>
+        // 游戏变量
+        let allClicks = 0;
+        let myClicks = 0;
+        let currentCPS = 0;
+        let clicksInLastSecond = [];
+        let soundEnabled = true;
+        
+        // 获取元素
+        const lizardButton = document.getElementById('lizardButton');
+        const clickCountDisplay = document.getElementById('clickCount');
+        const cpsCountDisplay = document.getElementById('cpsCount');
+        const currentCpsCountDisplay = document.getElementById('currentCpsCount');
+        const flyingLizardsContainer = document.getElementById('flyingLizards');
+        
+        // 控制按钮
+        const soundBtn = document.getElementById('soundBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const infoBtn = document.getElementById('infoBtn');
+        
+        console.log('🔍 Elements found:');
+        console.log('- lizardButton:', !!lizardButton);
+        console.log('- clickCountDisplay:', !!clickCountDisplay);
+        console.log('- cpsCountDisplay:', !!cpsCountDisplay);
+        console.log('- currentCpsCountDisplay:', !!currentCpsCountDisplay);
+        
+        // 音频系统
+        const audioPool = [];
+        const poolSize = 3;
+        let currentAudioIndex = 0;
+        
+        // 初始化音频
+        function initializeAudio() {
+            for (let i = 0; i < poolSize; i++) {
+                const audio = new Audio('lizard.wav');
+                audio.preload = 'auto';
+                audio.volume = 1.0;
+                audioPool.push(audio);
+            }
+        }
+        
+        // 播放点击音效
+        function playClickSound() {
+            if (!soundEnabled) return;
+            
+            const audio = audioPool[currentAudioIndex];
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log('Audio play failed:', e));
+                currentAudioIndex = (currentAudioIndex + 1) % poolSize;
+            }
+        }
+        
+        // 更新显示
+        function updateDisplay() {
+            if (clickCountDisplay) {
+                clickCountDisplay.textContent = allClicks.toLocaleString();
+            }
+            if (cpsCountDisplay) {
+                cpsCountDisplay.textContent = myClicks;
+            }
+            if (currentCpsCountDisplay) {
+                currentCpsCountDisplay.textContent = currentCPS;
+            }
+        }
+        
+        // 更新CPS
+        function updateCPS() {
+            const now = Date.now();
+            const oneSecondAgo = now - 1000;
+            
+            clicksInLastSecond = clicksInLastSecond.filter(time => time > oneSecondAgo);
+            currentCPS = clicksInLastSecond.length;
+            
+            updateDisplay();
+        }
+        
+        // 创建点击特效
+        function createClickEffect(event) {
+            const effect = document.createElement('div');
+            effect.textContent = '+1';
+            effect.style.position = 'absolute';
+            effect.style.left = event.clientX + 'px';
+            effect.style.top = event.clientY + 'px';
+            effect.style.color = '#4CAF50';
+            effect.style.fontWeight = 'bold';
+            effect.style.fontSize = '1.5rem';
+            effect.style.pointerEvents = 'none';
+            effect.style.zIndex = '1000';
+            effect.style.transition = 'all 1s ease-out';
+            
+            document.body.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.style.transform = 'translateY(-50px)';
+                effect.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => {
+                if (effect.parentNode) {
+                    document.body.removeChild(effect);
+                }
+            }, 1000);
+        }
+        
+        // 创建飞行蜥蜴
+        function createFlyingLizard() {
+            if (!flyingLizardsContainer) return;
+            
+            const lizard = document.createElement('div');
+            lizard.textContent = '🦎';
+            lizard.style.position = 'absolute';
+            lizard.style.fontSize = '2rem';
+            lizard.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            lizard.style.top = Math.random() * (window.innerHeight * 0.6) + (window.innerHeight * 0.2) + 'px';
+            lizard.style.opacity = '1';
+            lizard.style.transition = 'all 2s ease-out';
+            lizard.style.pointerEvents = 'none';
+            
+            flyingLizardsContainer.appendChild(lizard);
+            
+            setTimeout(() => {
+                lizard.style.transform = 'translateY(-100px) scale(0.5) rotate(360deg)';
+                lizard.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => {
+                if (lizard.parentNode) {
+                    flyingLizardsContainer.removeChild(lizard);
+                }
+            }, 2000);
+        }
+        
+        // 处理蜥蜴点击
+        function handleLizardClick(event) {
+            console.log('🦎 Lizard clicked!');
+            
+            allClicks++;
+            myClicks++;
+            
+            const now = Date.now();
+            clicksInLastSecond.push(now);
+            
+            // 播放音效
+            playClickSound();
+            
+            // 更新CPS和显示
+            updateCPS();
+            
+            // 创建特效
+            createClickEffect(event);
+            createFlyingLizard();
+            
+            // 按钮动画
+            const lizardImage = lizardButton.querySelector('.lizard-image');
+            if (lizardImage) {
+                lizardImage.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    lizardImage.style.transform = 'scale(1)';
+                }, 100);
+            }
+            
+            // 保存数据
+            try {
+                localStorage.setItem('lizardGameData', JSON.stringify({
+                    allClicks: allClicks,
+                    myClicks: myClicks
+                }));
+            } catch (e) {
+                console.log('Save failed:', e);
+            }
+        }
+        
+        // 控制按钮功能
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            if (soundBtn) {
+                soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+            }
+        }
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(e => console.log('Fullscreen failed:', e));
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        function shareGame() {
+            const text = `我在蜥蜴点击游戏中点击了 ${myClicks} 次！你能超过我吗？`;
+            if (navigator.share) {
+                navigator.share({
+                    title: '🦎 Lizard Click Game',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
+                    alert('分数已复制到剪贴板！');
+                }).catch(() => {
+                    alert(text);
+                });
+            }
+        }
+        
+        function showInfo() {
+            alert(`🦎 蜥蜴点击游戏
+
+📊 统计信息:
+• 全球总点击: ${allClicks.toLocaleString()}
+• 我的点击: ${myClicks}
+• 当前CPS: ${currentCPS}
+
+💡 提示: 点击越快CPS越高！`);
+        }
+        
+        // 加载保存的数据
+        function loadGameData() {
+            try {
+                const saved = localStorage.getItem('lizardGameData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    allClicks = data.allClicks || 0;
+                    myClicks = data.myClicks || 0;
+                }
+            } catch (e) {
+                console.log('Load failed:', e);
+            }
+        }
+        
+        // 初始化游戏
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎮 Game initializing...');
+            
+            // 加载数据
+            loadGameData();
+            
+            // 初始化音频
+            initializeAudio();
+            
+            // 设置事件监听器
+            if (lizardButton) {
+                lizardButton.addEventListener('click', handleLizardClick);
+                console.log('✅ Lizard click listener added');
+            }
+            
+            if (soundBtn) soundBtn.addEventListener('click', toggleSound);
+            if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullscreen);
+            if (shareBtn) shareBtn.addEventListener('click', shareGame);
+            if (infoBtn) infoBtn.addEventListener('click', showInfo);
+            
+            // 更新显示
+            updateDisplay();
+            
+            // 定期更新CPS
+            setInterval(updateCPS, 100);
+            
+            console.log('🎮 Game initialized successfully!');
+        });
+        
+        // 测试函数
+        window.testClick = function() {
+            console.log('🧪 Test click');
+            handleLizardClick({ clientX: 400, clientY: 300 });
+        };
+        
+        console.log('🦎 Game script loaded!');
+    </script>
 </body>
 </html>

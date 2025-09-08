@@ -1,5 +1,5 @@
 // Game Variables  
-let clickCount = 3847291;
+let clickCount = 0; // 从0开始，而不是3847291
 let soundEnabled = true;
 
 // Runtime Stats and History (initialized to avoid ReferenceError)
@@ -842,16 +842,16 @@ function loadGameData() {
         const saved = localStorage.getItem('lizardClickData');
         if (saved) {
             const data = JSON.parse(saved);
-            clickCount = data.clickCount || 3847291;
+            clickCount = data.clickCount || 0;
             console.log('Loaded clickCount:', clickCount);
         } else {
-            // 如果没有保存数据，设置初始值为 3847291
-            clickCount = 3847291;
+            // 如果没有保存数据，设置初始值为 0
+            clickCount = 0;
             console.log('No saved data, using initial clickCount:', clickCount);
         }
     } catch (error) {
         console.log('Failed to load game data:', error);
-        clickCount = 3847291;
+        clickCount = 0;
     }
 }
 
@@ -1008,7 +1008,7 @@ window.clearClickHistory = function() {
 // 全局函数：重置游戏
 window.resetGame = function() {
     if (confirm('确定要重置所有游戏数据吗？')) {
-        clickCount = 3847291;
+        clickCount = 0;
         clickHistory = [];
         maxCPS = 0;
         currentCPS = 0;
@@ -1018,8 +1018,8 @@ window.resetGame = function() {
         localStorage.removeItem('lizardClickData');
         updateDisplay();
         
-        console.log('🔄 游戏数据已重置到初始值 3847291');
-        alert('游戏数据已重置到初始值 3847291！');
+        console.log('🔄 游戏数据已重置到初始值 0');
+        alert('游戏数据已重置到初始值 0！');
     }
 };
 
