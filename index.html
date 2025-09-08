@@ -1,55 +1,47 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lizard Click Online</title>
+    <title>🦎 Lizard Click Game - Play Online</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
     
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3219924658522446"
          crossorigin="anonymous"></script>
-    
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        
-        .ad-container {
-            margin: 20px 0;
-            text-align: center;
-        }
-        
-        .content {
-            line-height: 1.6;
-            color: #333;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>欢迎来到 Lizard Click Online</h1>
-            <p>您的在线体验平台</p>
-        </div>
-        
-        <!-- 广告位置 1 - 页面顶部 -->
+    <!-- Header -->
+    <header class="header">
+        <nav class="nav">
+            <div class="nav-brand">
+                <div class="logo">🦎 Lizard Click</div>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#hero">Play Game</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#how-to-play">How to Play</a></li>
+                <li><a href="#why-play">Why Play</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="#hero" class="btn-play">Play Now</a></li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Hero Section with Game -->
+    <section class="hero" id="hero">
+        <!-- 顶部广告 -->
         <div class="ad-container">
             <ins class="adsbygoogle"
                  style="display:block"
@@ -62,36 +54,720 @@
             </script>
         </div>
         
-        <div class="content">
-            <h2>关于我们</h2>
-            <p>这里是您的网站内容区域。您可以在这里添加任何您想要展示的内容。</p>
+        <div class="game-container">
+            <div class="game-title">
+                <h1>🦎 Lizard Click Game</h1>
+            </div>
             
-            <h3>功能特色</h3>
-            <ul>
-                <li>响应式设计</li>
-                <li>现代化界面</li>
-                <li>优化的用户体验</li>
-                <li>集成广告系统</li>
-            </ul>
+            <!-- Game Stats -->
+            <div class="game-stats">
+                <div class="stat-box">
+                    <div class="stat-label">All Clicks</div>
+                    <div class="stat-value clicks-value" id="clickCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">My Clicks</div>
+                    <div class="stat-value cps-value" id="cpsCount">0</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-label">CPS</div>
+                    <div class="stat-value current-cps-value" id="currentCpsCount">0</div>
+                </div>
+            </div>
+
+            <!-- Main Lizard Character -->
+            <div class="lizard-container">
+                <button class="lizard-character" id="lizardButton" type="button">
+                    <img src="lizard.png" alt="Click the lizard!" class="lizard-image">
+                </button>
+            </div>
+
+            <!-- Game Description -->
+            <div class="game-description">
+                <p class="main-text">Click the lizard button as fast as you can! 🦎</p>
+                <p class="sub-text">Experience the viral "lizard lizard lizard" meme!</p>
+            </div>
+
+            <!-- 游戏内广告 -->
+            <div class="ad-container">
+                <ins class="adsbygoogle"
+                     style="display:block; text-align:center;"
+                     data-ad-layout="in-article"
+                     data-ad-format="fluid"
+                     data-ad-client="ca-pub-3219924658522446"
+                     data-ad-slot="0987654321"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="control-buttons">
+                <button class="control-btn sound-btn" id="soundBtn" title="Sound">🔊</button>
+                <button class="control-btn fullscreen-btn" id="fullscreenBtn" title="Fullscreen">⛶</button>
+                <button class="control-btn share-btn" id="shareBtn" title="Share">📤</button>
+                <button class="control-btn info-btn" id="infoBtn" title="Info">ℹ</button>
+            </div>
         </div>
-        
-        <!-- 广告位置 2 - 内容中间 -->
-        <div class="ad-container">
-            <ins class="adsbygoogle"
-                 style="display:block; text-align:center;"
-                 data-ad-layout="in-article"
-                 data-ad-format="fluid"
-                 data-ad-client="ca-pub-3219924658522446"
-                 data-ad-slot="0987654321"></ins>
-            <script>
-                 (adsbygoogle = window.adsbygoogle || []).push({});
-            </script>
+
+        <!-- Flying lizards container -->
+        <div class="flying-lizards" id="flyingLizards"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2>Game Features</h2>
+            <p class="features-intro">
+                Experience the most addictive lizard clicking game with amazing features and endless fun!
+            </p>
+            
+            <div class="feature-category">
+                <h3>🎮 Core Game Features</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <span class="feature-icon">🦎</span>
+                        <h4>Interactive Lizard</h4>
+                        <p>Click the adorable lizard character and watch it respond with delightful animations and effects.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">📊</span>
+                        <h4>Real-time Statistics</h4>
+                        <p>Track your clicking performance with live counters showing total clicks, personal clicks, and CPS (Clicks Per Second).</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🎵</span>
+                        <h4>Sound Effects</h4>
+                        <p>Enjoy satisfying click sounds that enhance your gaming experience. Toggle sound on/off as needed.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="feature-category">
+                <h3>✨ Visual Effects</h3>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <span class="feature-icon">🌟</span>
+                        <h4>Click Animations</h4>
+                        <p>Every click triggers beautiful visual effects including floating numbers and particle animations.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🦎</span>
+                        <h4>Flying Lizards</h4>
+                        <p>Watch cute lizard emojis fly across the screen with each click, creating a magical atmosphere.</p>
+                    </div>
+                    <div class="feature-card">
+                        <span class="feature-icon">🎨</span>
+                        <h4>Responsive Design</h4>
+                        <p>Beautiful, modern interface that works perfectly on desktop, tablet, and mobile devices.</p>
+                    </div>
+                </div>
+            </div>
         </div>
-        
-        <div class="content">
-            <h3>更多内容</h3>
-            <p>继续添加您的网站内容...</p>
+    </section>
+
+    <!-- How to Play Section -->
+    <section class="how-to-play" id="how-to-play">
+        <div class="container">
+            <h2>How to Play</h2>
+            <p class="section-intro">
+                Get started with the Lizard Click Game in just a few simple steps!
+            </p>
+            
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Click the Lizard</h3>
+                    <p>Simply click on the cute lizard character to start earning points. Each click counts!</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Watch Your Stats</h3>
+                    <p>Monitor your progress with real-time counters showing your clicks and clicking speed (CPS).</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Enjoy the Effects</h3>
+                    <p>Experience satisfying visual and audio feedback with every click you make.</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Share Your Score</h3>
+                    <p>Challenge friends by sharing your high scores and see who can click the fastest!</p>
+                </div>
+            </div>
         </div>
+    </section>
+
+    <!-- Why Play Section -->
+    <section class="why-play" id="why-play">
+        <div class="container">
+            <h2>Why Play Lizard Click?</h2>
+            <p class="section-intro">
+                Discover the benefits and fun of playing our addictive lizard clicking game!
+            </p>
+            
+            <div class="benefits-grid">
+                <div class="benefit">
+                    <h3>🧘 Stress Relief</h3>
+                    <p>Perfect for quick stress relief and relaxation during busy days. The repetitive clicking action is surprisingly therapeutic.</p>
+                </div>
+                <div class="benefit">
+                    <h3>⚡ Improve Reflexes</h3>
+                    <p>Enhance your hand-eye coordination and clicking speed through regular practice and gameplay.</p>
+                </div>
+                <div class="benefit">
+                    <h3>🎯 Set Goals</h3>
+                    <p>Challenge yourself to reach higher CPS rates and beat your personal records.</p>
+                </div>
+                <div class="benefit">
+                    <h3>🕐 Quick Entertainment</h3>
+                    <p>Perfect for short breaks - play for just a few minutes or hours, it's entirely up to you!</p>
+                </div>
+                <div class="benefit">
+                    <h3>🌐 Play Anywhere</h3>
+                    <p>No downloads required! Play directly in your browser on any device, anytime, anywhere.</p>
+                </div>
+                <div class="benefit">
+                    <h3>🆓 Completely Free</h3>
+                    <p>Enjoy unlimited gameplay without any costs, subscriptions, or hidden fees.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="container">
+            <h2>Frequently Asked Questions</h2>
+            <p class="faq-intro">
+                Find answers to common questions about the Lizard Click Game and get the most out of your gaming experience.
+            </p>
+            
+            <div class="faq-content">
+                <div class="faq-category">
+                    <h3>🎮 Gameplay Questions</h3>
+                    
+                    <div class="faq-item expanded">
+                        <h4>What is the Lizard Click Game?</h4>
+                        <div class="faq-answer">
+                            <p>The Lizard Click Game is a fun, addictive browser-based clicking game where players click on a cute lizard character to earn points. It features real-time statistics, visual effects, sound effects, and various interactive elements that make clicking surprisingly entertaining.</p>
+                            <p>The game is inspired by the viral "lizard lizard lizard" meme and provides a simple yet engaging way to pass time, relieve stress, or challenge yourself to achieve higher clicking speeds.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item expanded">
+                        <h4>How do I play the game?</h4>
+                        <div class="faq-answer">
+                            <p>Playing is incredibly simple:</p>
+                            <p>1. Click on the lizard character in the center of the screen<br>
+                            2. Watch your click counters increase in real-time<br>
+                            3. Try to click as fast as possible to increase your CPS (Clicks Per Second)<br>
+                            4. Enjoy the visual effects and sounds with each click<br>
+                            5. Challenge yourself to beat your previous records!</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item expanded">
+                        <h4>What does CPS mean?</h4>
+                        <div class="faq-answer">
+                            <p>CPS stands for "Clicks Per Second" and measures how fast you're clicking. It's calculated by counting how many times you click within a one-second window.</p>
+                            <p>A good CPS rate for beginners is around 3-5 clicks per second, while experienced players can achieve 8-12 CPS or even higher. The game displays your current CPS in real-time, so you can see your clicking speed improve as you practice!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-category">
+                    <h3>🔧 Technical Questions</h3>
+                    
+                    <div class="faq-item expanded">
+                        <h4>Do I need to download anything to play?</h4>
+                        <div class="faq-answer">
+                            <p>No downloads required! The Lizard Click Game runs entirely in your web browser. Simply visit the website and start playing immediately.</p>
+                            <p>The game works on all modern browsers including Chrome, Firefox, Safari, and Edge. It's also fully responsive and works great on mobile devices, tablets, and desktop computers.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item expanded">
+                        <h4>Is the game free to play?</h4>
+                        <div class="faq-answer">
+                            <p>Yes, the Lizard Click Game is completely free to play! There are no hidden costs, subscriptions, or premium features that require payment.</p>
+                            <p>The game is supported by non-intrusive advertisements that help keep it free for everyone. You can enjoy unlimited gameplay without spending any money.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item expanded">
+                        <h4>Does the game save my progress?</h4>
+                        <div class="faq-answer">
+                            <p>Yes! Your personal click count and statistics are automatically saved in your browser's local storage. This means your progress will be preserved even if you close the browser or restart your computer.</p>
+                            <p>However, if you clear your browser data or use a different device, your progress will reset. The global click counter (showing all players' combined clicks) is shared across all players.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="faq-category">
+                    <h3>🎯 Tips & Strategies</h3>
+                    
+                    <div class="faq-item expanded">
+                        <h4>How can I improve my clicking speed?</h4>
+                        <div class="faq-answer">
+                            <p>Here are some proven techniques to increase your CPS:</p>
+                            <p>• Use multiple fingers: Try alternating between your index and middle finger<br>
+                            • Find your rhythm: Develop a consistent clicking pattern<br>
+                            • Stay relaxed: Tension in your hand will slow you down<br>
+                            • Practice regularly: Like any skill, clicking speed improves with practice<br>
+                            • Use a good mouse: A responsive mouse can make a significant difference</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item expanded">
+                        <h4>What's considered a good CPS score?</h4>
+                        <div class="faq-answer">
+                            <p>CPS scores vary widely among players:</p>
+                            <p>• Beginner: 2-4 CPS - Just getting started<br>
+                            • Average: 5-7 CPS - Decent clicking speed<br>
+                            • Good: 8-10 CPS - Above average performance<br>
+                            • Excellent: 11-15 CPS - Very impressive speed<br>
+                            • Expert: 16+ CPS - Exceptional clicking ability</p>
+                            <p>Remember, the most important thing is to have fun! Don't worry too much about achieving the highest scores.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 底部广告 -->
+    <div class="ad-container">
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-3219924658522446"
+             data-ad-slot="2468135790"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <script>
+             (adsbygoogle = window.adsbygoogle || []).push({});
+        </script>
     </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <h3>🦎 Lizard Click Game</h3>
+                    <p>The most addictive clicking game on the web!</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-column">
+                        <h4>Game</h4>
+                        <ul>
+                            <li><a href="#hero">Play Now</a></li>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#how-to-play">How to Play</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-column">
+                        <h4>Support</h4>
+                        <ul>
+                            <li><a href="#faq">FAQ</a></li>
+                            <li><a href="#why-play">Why Play</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; <span id="currentYear">2024</span> Lizard Click Game. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 简化的游戏脚本 -->
+    <script>
+        // 游戏变量
+        const FIXED_BASE_COUNT = 3847291; // 固定的全球基础点击数
+        let allClicks = FIXED_BASE_COUNT; // 从固定基础值开始
+        let myClicks = 0;
+        let currentCPS = 0;
+        let clicksInLastSecond = [];
+        let soundEnabled = true;
+        
+        // 获取元素
+        const lizardButton = document.getElementById('lizardButton');
+        const clickCountDisplay = document.getElementById('clickCount');
+        const cpsCountDisplay = document.getElementById('cpsCount');
+        const currentCpsCountDisplay = document.getElementById('currentCpsCount');
+        const flyingLizardsContainer = document.getElementById('flyingLizards');
+        
+        // 控制按钮
+        const soundBtn = document.getElementById('soundBtn');
+        const fullscreenBtn = document.getElementById('fullscreenBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const infoBtn = document.getElementById('infoBtn');
+        
+        console.log('🔍 Elements found:');
+        console.log('- lizardButton:', !!lizardButton);
+        console.log('- clickCountDisplay:', !!clickCountDisplay);
+        console.log('- cpsCountDisplay:', !!cpsCountDisplay);
+        console.log('- currentCpsCountDisplay:', !!currentCpsCountDisplay);
+        
+        // 音频系统
+        const audioPool = [];
+        const poolSize = 3;
+        let currentAudioIndex = 0;
+        
+        // 初始化音频
+        function initializeAudio() {
+            for (let i = 0; i < poolSize; i++) {
+                const audio = new Audio('lizard.wav');
+                audio.preload = 'auto';
+                audio.volume = 1.0;
+                audioPool.push(audio);
+            }
+        }
+        
+        // 播放点击音效
+        function playClickSound() {
+            if (!soundEnabled) return;
+            
+            const audio = audioPool[currentAudioIndex];
+            if (audio) {
+                audio.currentTime = 0;
+                audio.play().catch(e => console.log('Audio play failed:', e));
+                currentAudioIndex = (currentAudioIndex + 1) % poolSize;
+            }
+        }
+        
+        // 更新显示
+        function updateDisplay() {
+            if (clickCountDisplay) {
+                clickCountDisplay.textContent = allClicks.toLocaleString();
+            }
+            if (cpsCountDisplay) {
+                cpsCountDisplay.textContent = myClicks;
+            }
+            if (currentCpsCountDisplay) {
+                currentCpsCountDisplay.textContent = currentCPS;
+            }
+        }
+        
+        // 更新CPS
+        function updateCPS() {
+            const now = Date.now();
+            const oneSecondAgo = now - 1000;
+            
+            clicksInLastSecond = clicksInLastSecond.filter(time => time > oneSecondAgo);
+            currentCPS = clicksInLastSecond.length;
+            
+            updateDisplay();
+        }
+        
+        // 创建点击特效
+        function createClickEffect(event) {
+            const effect = document.createElement('div');
+            effect.textContent = '+1';
+            effect.style.position = 'absolute';
+            effect.style.left = event.clientX + 'px';
+            effect.style.top = event.clientY + 'px';
+            effect.style.color = '#4CAF50';
+            effect.style.fontWeight = 'bold';
+            effect.style.fontSize = '1.5rem';
+            effect.style.pointerEvents = 'none';
+            effect.style.zIndex = '1000';
+            effect.style.transition = 'all 1s ease-out';
+            
+            document.body.appendChild(effect);
+            
+            setTimeout(() => {
+                effect.style.transform = 'translateY(-50px)';
+                effect.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => {
+                if (effect.parentNode) {
+                    document.body.removeChild(effect);
+                }
+            }, 1000);
+        }
+        
+        // 创建飞行蜥蜴
+        function createFlyingLizard() {
+            if (!flyingLizardsContainer) return;
+            
+            const lizard = document.createElement('div');
+            lizard.textContent = '🦎';
+            lizard.style.position = 'absolute';
+            lizard.style.fontSize = '2rem';
+            lizard.style.left = Math.random() * (window.innerWidth - 100) + 'px';
+            lizard.style.top = Math.random() * (window.innerHeight * 0.6) + (window.innerHeight * 0.2) + 'px';
+            lizard.style.opacity = '1';
+            lizard.style.transition = 'all 2s ease-out';
+            lizard.style.pointerEvents = 'none';
+            
+            flyingLizardsContainer.appendChild(lizard);
+            
+            setTimeout(() => {
+                lizard.style.transform = 'translateY(-100px) scale(0.5) rotate(360deg)';
+                lizard.style.opacity = '0';
+            }, 10);
+            
+            setTimeout(() => {
+                if (lizard.parentNode) {
+                    flyingLizardsContainer.removeChild(lizard);
+                }
+            }, 2000);
+        }
+        
+        // 处理蜥蜴点击
+        function handleLizardClick(event) {
+            console.log('🦎 Lizard clicked!');
+            
+            allClicks++; // 全球点击数增加
+            myClicks++; // 个人点击数增加
+            
+            const now = Date.now();
+            clicksInLastSecond.push(now);
+            
+            // 播放音效
+            playClickSound();
+            
+            // 更新CPS和显示
+            updateCPS();
+            
+            // 创建特效
+            createClickEffect(event);
+            createFlyingLizard();
+            
+            // 按钮动画
+            const lizardImage = lizardButton.querySelector('.lizard-image');
+            if (lizardImage) {
+                lizardImage.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    lizardImage.style.transform = 'scale(1)';
+                }, 100);
+            }
+            
+            // 保存数据
+            try {
+                localStorage.setItem('lizardGameData', JSON.stringify({
+                    allClicks: allClicks,
+                    myClicks: myClicks
+                }));
+            } catch (e) {
+                console.log('Save failed:', e);
+            }
+        }
+        
+        // 控制按钮功能
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            if (soundBtn) {
+                soundBtn.textContent = soundEnabled ? '🔊' : '🔇';
+            }
+        }
+        
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().catch(e => console.log('Fullscreen failed:', e));
+            } else {
+                document.exitFullscreen();
+            }
+        }
+        
+        function shareGame() {
+            const text = `我在蜥蜴点击游戏中点击了 ${myClicks} 次！你能超过我吗？`;
+            if (navigator.share) {
+                navigator.share({
+                    title: '🦎 Lizard Click Game',
+                    text: text,
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
+                    alert('分数已复制到剪贴板！');
+                }).catch(() => {
+                    alert(text);
+                });
+            }
+        }
+        
+        function showInfo() {
+            alert(`🦎 蜥蜴点击游戏\n\n📊 统计信息:\n• 全球总点击: ${allClicks.toLocaleString()}\n• 我的点击: ${myClicks}\n• 当前CPS: ${currentCPS}\n\n💡 提示: 点击越快CPS越高！`);
+        }
+        
+        // 加载保存的数据
+        function loadGameData() {
+            try {
+                const saved = localStorage.getItem('lizardGameData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    // 确保allClicks至少是固定基础值
+                    allClicks = Math.max(data.allClicks || FIXED_BASE_COUNT, FIXED_BASE_COUNT);
+                    myClicks = data.myClicks || 0;
+                    console.log('✅ Loaded data - All Clicks:', allClicks, 'My Clicks:', myClicks);
+                } else {
+                    // 如果没有保存数据，使用固定基础值
+                    allClicks = FIXED_BASE_COUNT;
+                    myClicks = 0;
+                    console.log('✅ No saved data, using fixed base - All Clicks:', allClicks);
+                }
+            } catch (e) {
+                console.log('Load failed:', e);
+                allClicks = FIXED_BASE_COUNT;
+                myClicks = 0;
+            }
+        }
+        
+        // Mobile Navigation Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current year dynamically
+            const currentYearElement = document.getElementById('currentYear');
+            if (currentYearElement) {
+                currentYearElement.textContent = new Date().getFullYear();
+            }
+            
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            
+            if (hamburger && navMenu) {
+                hamburger.setAttribute('aria-expanded', 'false');
+                hamburger.addEventListener('click', function() {
+                    const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+                    hamburger.setAttribute('aria-expanded', String(!expanded));
+                    hamburger.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+                
+                // Close mobile menu when clicking on a link
+                document.querySelectorAll('.nav-menu a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        hamburger.classList.remove('active');
+                        navMenu.classList.remove('active');
+                    });
+                });
+            }
+            
+            console.log('🎮 Game initializing...');
+            
+            // 加载数据
+            loadGameData();
+            
+            // 初始化音频
+            initializeAudio();
+            
+            // 设置事件监听器
+            if (lizardButton) {
+                lizardButton.addEventListener('click', handleLizardClick);
+                console.log('✅ Lizard click listener added');
+            }
+            
+            if (soundBtn) soundBtn.addEventListener('click', toggleSound);
+            if (fullscreenBtn) fullscreenBtn.addEventListener('click', toggleFullscreen);
+            if (shareBtn) shareBtn.addEventListener('click', shareGame);
+            if (infoBtn) infoBtn.addEventListener('click', showInfo);
+            
+            // 更新显示
+            updateDisplay();
+            
+            // 定期更新CPS
+            setInterval(updateCPS, 100);
+            
+            console.log('🎮 Game initialized successfully!');
+        });
+        
+        // Smooth Scrolling for Navigation Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header Background on Scroll and Play Now Button Visibility
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            const playNowBtn = document.querySelector('.btn-play');
+            
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+                if (playNowBtn) {
+                    playNowBtn.style.opacity = '1';
+                    playNowBtn.style.visibility = 'visible';
+                }
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+                if (playNowBtn) {
+                    playNowBtn.style.opacity = '0.5';
+                    playNowBtn.style.visibility = 'visible';
+                }
+            }
+        });
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.querySelectorAll('.feature-card, .step, .benefit, .faq-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // Play Now Button Functionality - scroll to game
+        document.querySelectorAll('.btn-play').forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Scroll to hero section where the game is
+                const heroSection = document.getElementById('hero');
+                if (heroSection) {
+                    heroSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                    
+                    // Add a little highlight effect to the game button
+                    setTimeout(() => {
+                        if (lizardButton) {
+                            lizardButton.style.transform = 'scale(1.1)';
+                            lizardButton.style.boxShadow = '0 0 30px rgba(76, 175, 80, 0.5)';
+                            
+                            setTimeout(() => {
+                                lizardButton.style.transform = '';
+                                lizardButton.style.boxShadow = '';
+                            }, 1000);
+                        }
+                    }, 500);
+                }
+            });
+        });
+        
+        // 测试函数
+        window.testClick = function() {
+            console.log('🧪 Test click');
+            handleLizardClick({ clientX: 400, clientY: 300 });
+        };
+        
+        console.log('🦎 Game script loaded!');
+    </script>
 </body>
 </html>
