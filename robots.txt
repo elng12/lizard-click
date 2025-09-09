@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://lizardclick.online/sitemap.xml
+Sitemap: https://lizardbutton.click/sitemap.xml
 
 # Block access to admin or sensitive files (if any)
 Disallow: /admin/
