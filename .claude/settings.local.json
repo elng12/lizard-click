@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(curl -I https://lizardbutton.click/sitemap.xml)",
+      "Bash(curl -s https://lizardbutton.click/sitemap.xml)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
