@@ -3,7 +3,8 @@
     "allow": [
       "Bash(curl -I https://lizardbutton.click/sitemap.xml)",
       "Bash(curl -s https://lizardbutton.click/sitemap.xml)",
-      "Bash(curl -I https://lizardclick.online/sitemap.xml)"
+      "Bash(curl -I https://lizardclick.online/sitemap.xml)",
+      "Read(//mnt/c/Users/elng/Desktop/**)"
     ],
     "deny": [],
     "ask": []
